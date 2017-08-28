@@ -1,0 +1,3 @@
+preto < 40
+branco > 55
+azul +- 50
