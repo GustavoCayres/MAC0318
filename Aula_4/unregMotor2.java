@@ -20,11 +20,11 @@ public class unregMotor2 { //derivativo, diferencial
 		int u_straight = 50;
 		int turn;
 		int light_measurement;
-		int kp = 4;
+		int kp = 6;
 		int var;
 		int previous_error = 0;
 		int error;
-		int kd = 1;
+		int kd = 3;
 
 		Button.waitForAnyPress();
 		while(!Button.ESCAPE.isDown()){

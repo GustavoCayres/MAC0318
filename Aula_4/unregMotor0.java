@@ -23,16 +23,16 @@ public class unregMotor0 { //left-straight-right
 		while(!Button.ESCAPE.isDown()){
 			light_measurement = light.getLightValue();
 			if(light_measurement< 40){
-				mB.setPower(25);
-				mC.setPower(-25);
+				mB.setPower(-25);
+				mC.setPower(25);
 			}
 			if(light_measurement >= 40 && light_measurement < 55) {
 				mB.setPower(50);
 				mC.setPower(50);
 			}
 			if(light_measurement >= 55) {
-				mB.setPower(-25);
-				mC.setPower(25);
+				mB.setPower(25);
+				mC.setPower(-25);
 			}
 			RConsole.println(""+light_measurement);
 		}

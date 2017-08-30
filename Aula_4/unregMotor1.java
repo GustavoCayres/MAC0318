@@ -20,7 +20,7 @@ public class unregMotor1 { //Proporcional
 		int u_straight = 50;
 		int turn;
 		int light_measurement;
-		int kp = 3;
+		int kp = 4;
 		int var;
 
 		Button.waitForAnyPress();
