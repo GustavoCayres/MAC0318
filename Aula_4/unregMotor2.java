@@ -5,7 +5,7 @@ import lejos.nxt.NXTMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.comm.RConsole;
 
-public class unregMotor1 { //Proporcional
+public class unregMotor2 { //derivativo, diferencial
 	
 	static LightSensor light;
 	static NXTMotor mB;
@@ -20,13 +20,17 @@ public class unregMotor1 { //Proporcional
 		int u_straight = 50;
 		int turn;
 		int light_measurement;
-		int kp = 1;
+		int kp = 4;
 		int var;
+		int previous_error = 0;
+		int error;
+		int kd = 1;
 
 		Button.waitForAnyPress();
 		while(!Button.ESCAPE.isDown()){
 			light_measurement = light.getLightValue();
-			turn = kp * (45 - light_measurement);
+			error = (45 - light_measurement);
+			turn = kp * error + kd * (previous_error - error);
 			var = u_straight - turn;
 			if(var > 99) {
 				var = 100;
@@ -44,6 +48,7 @@ public class unregMotor1 { //Proporcional
 			} 
 			mC.setPower(var);
 			RConsole.println(""+light_measurement);
+			previous_error = error;
 		}
 		mB.stop();
 		mC.stop();

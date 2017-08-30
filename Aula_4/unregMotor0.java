@@ -5,7 +5,7 @@ import lejos.nxt.NXTMotor;
 import lejos.nxt.SensorPort;
 import lejos.nxt.comm.RConsole;
 
-public class unregMotor0 { //desregulado
+public class unregMotor0 { //left-straight-right
 	
 	static LightSensor light;
 	static NXTMotor mB;
@@ -17,26 +17,24 @@ public class unregMotor0 { //desregulado
 		mB = new NXTMotor(MotorPort.B);
 		mC = new NXTMotor(MotorPort.C);
 
-		int u_straight = 50;
-		int turn;
 		int light_measurement;
-		int kp = 1;
-		int var;
 
 		Button.waitForAnyPress();
 		while(!Button.ESCAPE.isDown()){
-			if(light.getLightValue() < 35){
+			light_measurement = light.getLightValue();
+			if(light_measurement< 40){
 				mB.setPower(25);
 				mC.setPower(-25);
 			}
-			if(light.getLightValue() >= 35 && light.getLightValue() < 50) {
+			if(light_measurement >= 40 && light_measurement < 55) {
 				mB.setPower(50);
 				mC.setPower(50);
 			}
-			if(light.getLightValue() >= 50) {
+			if(light_measurement >= 55) {
 				mB.setPower(-25);
 				mC.setPower(25);
 			}
+			RConsole.println(""+light_measurement);
 		}
 		mB.stop();
 		mC.stop();
