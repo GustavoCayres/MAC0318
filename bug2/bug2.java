@@ -14,11 +14,11 @@ public class bug2 {
 	private static NXTRegulatedMotor rc = new NXTRegulatedMotor(MotorPort.C); //create instance of a regulated motor in motor port C
 	private static LightSensor light = new LightSensor(SensorPort.S4);
 	private static int rotation = 0;
+	private static Double best_line_position = 0.0;
 
 	public static void main(String args[])  
   	{
   		RConsole.openAny(0);
-
 		Button.waitForAnyPress();
 		
 		/*rb.rotate(256,true);
@@ -27,9 +27,11 @@ public class bug2 {
 		rb.suspendRegulation();
 		rc.suspendRegulation();
 
-		while(position[0] < 100) {
-		//if(true){
+		while(true) {
 			follow_line_until_obstacle();
+			if(position[0] > 122) {
+				break;
+			}
 			go_around_obstacle();
 			rotate_to_initial_direction();
 		}
@@ -48,47 +50,37 @@ public class bug2 {
 		position[2] += delta_theta; /*theta em radianos*/
 		tacho[0] = new_tacho_C;
 		tacho[1] = new_tacho_B;
+
+		RConsole.println(""+position[0]+" "+position[1]+" "+(position[2]*(180/3.14)));
 	}
-	private static void print_position(){
-		LCD.drawString(Double.toString(position[0]),0,0);
-		LCD.drawString(Double.toString(position[1]),0,1);
-		LCD.drawString(Double.toString(position[2]),0,2);
-		Delay.msDelay(200);
-		LCD.clear();
-	}
-	private static void print_position_console(){
-		RConsole.println("x = "+position[0]+" y = "+position[1]);
-		//LCD.drawString(Double.toString(position[0]),0,0);
-		//LCD.drawString(Double.toString(position[1]),0,1);
-		//LCD.drawString(Double.toString(position[2]),0,2);
-		//Button.waitForAnyPress();
-		//LCD.clear();
-	}
+	
 	private static void follow_line_until_obstacle(){
-		mb.setPower(25);
-		mc.setPower(25);
+		mb.setPower(20);
+		mc.setPower(20);
 		mb.forward();
 		mc.forward();
-		while(light.getLightValue() > 45 && position[0] < 100) {
+		while(light.getLightValue() > 45 && position[0] < 122) {
 			update_position();
 		}
+		best_line_position = Math.max(position[0], best_line_position);
 	}
 	private static void go_around_obstacle(){
 		int u_straight = 20;
 		int turn;
 		int light_measurement;
-		int kp = 5;
+		int kp = 3;
+		int kd = 3;
 		int var;
 		int previous_error = 0;
 		int error;
-		int kd = 2;
 		boolean stop_cycling = false;
 
 		long start_time = System.currentTimeMillis();
 		
 		while(!stop_cycling) {
-			if (System.currentTimeMillis() - start_time > 2000 && Math.abs(position[1]) < 1) {
+			if (System.currentTimeMillis() - start_time > 3500 && Math.abs(position[1]) < 1 && position[0] > best_line_position + 2) {
 				stop_cycling = true;
+				best_line_position = Math.max(position[0], best_line_position);
 			}
 
 			light_measurement = light.getLightValue();
@@ -116,24 +108,12 @@ public class bug2 {
 	}
 
 	private static void rotate_to_initial_direction() {
-		rb.stop(true);
-		rc.stop();
-		if(rotation == 0) {
-			rb.rotate(-250,true);
-			rc.rotate(250);
-		}
-		if(rotation == 1) {
-			rb.rotate(-120,true);
-			rc.rotate(120);
-		}
-		rotation = rotation + 1;
-		rb.stop(true);
-		rc.stop();
-		//regulated to unregulated
-		rb.suspendRegulation(); 
-		rc.suspendRegulation();
+		int u = 20;
 
+		mb.setPower(- (int) Math.signum(position[2]) * u);
+		mc.setPower((int) Math.signum(position[2]) * u);
+		while (Math.abs(position[2]) > 0.06) {
+			update_position();
+		}
 	}
-
-
 }
