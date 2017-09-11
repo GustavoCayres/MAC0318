@@ -1,0 +1,37 @@
+Pedro Marcondes 8941168
+Gustavo Cayres  8584323, movimento 1, 2 e 3
+Exercício Odometria
+
+movimento 1
+A saída do nosso é em milímetros. Como observado ouve uam pequena variação entre o espaço real que um movimento com uma
+velocidade de 300 graus por segundo durante 2.5 segundos. A variação é esperada dado que inicialmente a roda precisa
+alcançar a velocidade saindo do 0 e depois a variação para parar.
+
+      Saída obtida		Saída medida
+x 	  36.7cm			   36.0cm
+y 	  0						0			
+theta 0						0									
+
+movimento 2
+Usamos velocidade 450 na roda A e 300 na roda B. O tempo do movimento usado foi 2,5seg. As medições aqui foram estimadas
+imaginando a posição inicial na mesa o 0,0 e medindo dali, porém as medições são aproximadas, diferente das outras
+
+      Saída obtida	Saída medida
+x 	  31.29	cm	   		30.1 cm
+y 	  33.56	cm			31.0 cm			
+theta 1.64rads			1.62 rads
+
+
+movimento 3
+A saída do programa em si é em radianos, porém quando transformado para graus vemos que está muito próximo da medição
+real da rotação. A velocida é 300 graus/seg em cada roda e o tempo do movimento é 1,5 seg.
+
+      Saída obtida		Saída medida
+x 	  0			   			0
+y 	  0						0			
+theta 3.93 = 225,17graus	225 graus	
+
+Saída obtida			Saída medida
+0		      		  		0
+0							0			
+3.93rads = 225,17 graus		225 graus											
