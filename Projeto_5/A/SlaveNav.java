@@ -12,19 +12,20 @@ public class SlaveNav {
 	private static final byte ADD_POINT = 0; //adds waypoint to path
 	private static final byte TRAVEL_PATH = 1; // enables slave to execute the path
 	private static final byte STATUS = 2; // enquires about slave's position 
-	private static final byte STOP = 3; // closes communication
+	private static final byte SET_START = 3; // set initial waypoint
+	private static final byte STOP = 4; // closes communication
 
 	public static void main(String[] args) throws Exception {
-		//USBConnection btc = USB.waitForConnection(); /* USB communication */
+		// USBConnection btc = USB.waitForConnection(); /* USB communication */
 		/* Uncomment next line for Bluetooth */
 		BTConnection btc = Bluetooth.waitForConnection();
 		DataInputStream dis = btc.openDataInputStream();
 		DataOutputStream dos = btc.openDataOutputStream();
 
 		DifferentialPilot p = new DifferentialPilot(5.6f, 11.2f, Motor.C, Motor.B); // (wheel diameter, dist between wheels, left motor, right motor )
-    	Navigator nav = new Navigator(p);
-    	//OdometryPoseProvider position = new OdometryPoseProvider (p);
-    	//Navigator nav = new Navigator(p,position);
+		OdometryPoseProvider position = new OdometryPoseProvider (p);
+    	Navigator nav = new Navigator(p,position);
+    	Pose init = new Pose(0f, 0f, 0f);
 
 		LCD.drawString("READY", 0, 10);
 		while (true) {
@@ -45,7 +46,12 @@ public class SlaveNav {
 					break;
 				case STATUS:
 					dos.writeBoolean(nav.pathCompleted()); // Returns true if the the final waypoint has been reached
-					break;				
+					break;	
+				case SET_START:
+					init = new Pose(addX,addY,0f);
+					position.setPose(init);
+					dos.writeFloat(0);
+					break;
 				case STOP:
 					System.exit(1);
 				default:

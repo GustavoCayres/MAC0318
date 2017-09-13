@@ -21,8 +21,23 @@ public class mapaMedido{
       new Line(502,155,700,225),
       new Line(700,225, 725,490),
       new Line(725,490,480,525),
-      new Line(480,525,335,345)
-
+      new Line(480,525,335,345),
+      /* Path 1 */
+      /*new Line(100,813,426,873),
+      new Line(426,873,690,571),
+      new Line(690,571,830,507),
+      new Line(830,507,986,166),*/
+      /* Path 2 */
+      /*new Line(100,813,426,873),
+      new Line(426,873,690,571),
+      new Line(690,571,450,593),
+      new Line(450,593,263,350),
+      new Line(263,350,490,100),
+      new Line(490,100,986,166),*/
+      /* Path 3 */
+      new Line(100,813,1140,885),
+      new Line(1140,885,1117,432),
+      new Line(1117,432,986,166),
     };
     //Rectangle(int x, int y, int width, int height)  -- always integer coordinates
     //Creates a rectangle with top left corner at (x,y) and with specified width and height.
@@ -32,7 +47,7 @@ public class mapaMedido{
 
     Point[] points = {
       new Point(100,813),    /* P1 */
-      new Point(168,873),   /* P2 */
+      new Point(426,873),   /* P2 */
       new Point(1140,885),  /* P3 */
       new Point(1117,432),  /* P4 */
       new Point(830,507),   /* P5 */
@@ -52,3 +67,4 @@ public class mapaMedido{
     }
   }
 }
+

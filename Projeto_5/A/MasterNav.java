@@ -6,12 +6,13 @@ public class MasterNav {
 	private static final byte ADD_POINT = 0; //adds waypoint to path
 	private static final byte TRAVEL_PATH = 1; // enables slave to execute the path
 	private static final byte STATUS = 2; // enquires about slave's position 
-	private static final byte STOP = 3; // closes communication
-	
+	private static final byte SET_START = 3; // set initial waypoint
+	private static final byte STOP = 4; // closes communication
+
 	private NXTComm nxtComm;
 	private DataOutputStream dos;
 	private DataInputStream dis;	
-	
+
 	private static final String NXT_ID = "NXT07"; // NXT BRICK ID
 
 	private float sendCommand(byte command, float paramX, float paramY) {
@@ -27,6 +28,7 @@ public class MasterNav {
 			return -1f;
 		}
 	}
+
 	private boolean sendCommand(byte command) {
 		try {
 			dos.writeByte(command);
@@ -81,11 +83,14 @@ public class MasterNav {
 		byte cmd = 0; float param = 0f; float ret=0f; float addX = 0f; float addY = 0f; boolean boolRet = false;
 		MasterNav master = new MasterNav();
 		master.connect();
-	    Scanner scan = new Scanner( System.in );	    
+	    Scanner scan = new Scanner( System.in );
+
+	    
 	    while(true) {
-	    	System.out.print("Enter command [0:ADD_POINT 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
+	    	
+	    	System.out.print("Enter command [0:ADD_POINT 1:TRAVEL_PATH 2:STATUS 3:SET_START 4:STOP]: ");
 	    	cmd = (byte) scan.nextFloat(); 
-	    	if (cmd == 0){
+	    	if (cmd == 0 || cmd == 3){
 	    		System.out.println("Enter coordinate X: ");
 	    		addX = scan.nextFloat();
 	    		System.out.println("Enter coordinate Y: ");
@@ -98,10 +103,19 @@ public class MasterNav {
 	    		boolRet = master.sendCommand(cmd);
 	    		System.out.println("cmd: " + " return: " + boolRet);
 	    	}else{
+	    		cmd = 3;
+	    		master.sendCommand(cmd, 10.0f, 81.3f);
+	    		cmd = 0;
+	   			master.sendCommand(cmd, 114.0f,88.5f);
+	    		master.sendCommand(cmd, 111.7f,43.2f);
+	    		master.sendCommand(cmd, 98.6f,16.6f);
+
+	    		addX = -1;
+	    		addY = -1;	
+	    		cmd = 1;
 	    		ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully recieved the dos
 	    		System.out.println("cmd: " + addX + " X: " + "Y: " + addY +" return: " + ret);
 	    	}
 	    }
 	}
-
 }
