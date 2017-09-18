@@ -7,13 +7,13 @@ import lejos.pc.comm.NXTInfo;
 import java.util.List;
 import java.util.Scanner;
 import java.io.*;
-import java.util.stream.Collectors;
+//import java.util.stream.Collectors;
 
 public class MasterDijkstra {
     private DataOutputStream dos;
     private DataInputStream dis;
 
-    private static final String NXT_ID = "NXT11"; // NXT BRICK ID
+    private static final String NXT_ID = "NXT07"; // NXT BRICK ID
 
     private static final Point[] points = {
             new Point(0, 0),
@@ -112,7 +112,7 @@ public class MasterDijkstra {
         int start, end;
 
         MasterDijkstra master = new MasterDijkstra();
-//        master.connect();
+        master.connect();
         Scanner scan = new Scanner( System.in );
 
         master.initGraph();
@@ -128,27 +128,28 @@ public class MasterDijkstra {
 
                 System.out.println(G);
                 List<Integer> path = G.shortestPathBetween(start, end);
-                String s = String.join(" -> ", path.stream().map(Object::toString).collect(Collectors.toList()));
-                System.out.println(s);
+                //String s = String.join(" -> ", path.stream().map(Object::toString).collect(Collectors.toList()));
+
+                System.out.println("path: ");
 
                 for (int v : path) {
                     Point p = points[v];
-//                    ret = master.sendCommand(cmd, p.x, p.y); // return 0 when Slave successfully received the dos
+                    System.out.println("" + v);
+ 
+                    ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
 
                     System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
                 }
 
             }
-
-            if (cmd == 2) {
-//                boolRet = master.sendCommand(cmd);
-                System.out.println("cmd: " + " return: " + boolRet);
+            if (cmd == 1 || cmd == 2) {
+                ret = master.sendCommand(cmd, (float) -1, (float) -1);
+                System.out.println("cmd: " + " return: " + ret);
             } else if (cmd == 3) {
-//                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
+                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
                 System.exit(0);
             }
         }
     }
-
 }
 
