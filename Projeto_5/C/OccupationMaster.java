@@ -20,12 +20,35 @@ public class OccupationMaster {
     private static int height = 1195 / grid_size + 1;
     private int[][] occupationMap = new int[height][width];
 
-    private class Cell {
+    public class Cell {
         int i, j;
 
         public Cell(int i, int j) {
             this.i = i;
             this.j = j;
+        }
+
+        public Cell(Point p) {
+            this.i = (int) p.x / grid_size;
+            this.j = (int) p.y / grid_size;
+        }
+
+        public Cell[] getNeighbors() {
+            return new Cell[]{
+                new Cell(i, j + 1),
+                new Cell(i + 1, j),
+                new Cell(i - 1, j),
+                new Cell(i, j - 1),
+            };
+        }
+
+        public boolean equals(Cell that) {
+            return this.i == that.i && this.j == that.j;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("%d %d", this.i, this.j);
         }
     }
 
@@ -67,7 +90,7 @@ public class OccupationMaster {
         int i_s = (int) source.x / grid_size;
         int j_s = (int) source.y / grid_size;
 
-        occupationMap[i_t][j_t] = -1;
+        occupationMap[i_t][j_t] = -2;
         LinkedList<Cell> queue = new LinkedList<>();
 
         Cell[] neighbors = {
@@ -108,9 +131,27 @@ public class OccupationMaster {
         }
     }
 
-    private List<Cell> findPath() {
+    private List<Cell> findPath(Cell origin, Cell target) {
         ArrayList<Cell> path = new ArrayList<>();
 
+        Cell current = origin;
+
+        while (!current.equals(target)) {
+            int min_dist = Integer.MAX_VALUE;
+            Cell min = null;
+
+            for (Cell neighbor : current.getNeighbors()) {
+                if (isValid(neighbor) &&
+                        occupationMap[neighbor.i][neighbor.j] != -1 &&
+                        occupationMap[neighbor.i][neighbor.j] < min_dist) {
+                    min = neighbor;
+                    min_dist = occupationMap[neighbor.i][neighbor.j];
+                }
+            }
+
+            path.add(min);
+            current = min;
+        }
 
         return path;
     }
@@ -204,6 +245,27 @@ public class OccupationMaster {
         }
     }
 
+    private void testPath() {
+        buildOccupationMap();
+        populateDistanceToTarget(points[0], points[10]);
+        List<Cell> path = findPath(new Cell(points[0]), new Cell(points[10]));
+
+        System.out.println("Map");
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                System.out.print(String.format("%3d", occupationMap[i][j]));
+            }
+            System.out.print("\n");
+        }
+
+        System.out.println("Done");
+
+        for (Cell c : path) {
+            System.out.println(c);
+        }
+    }
+
     public static void main(String[] args) {
         byte cmd;
         float ret = 0, addX = 0f, addY = 0f;
@@ -233,19 +295,7 @@ public class OccupationMaster {
 //            }
 //        }
 
-        master.buildOccupationMap();
-        master.populateDistanceToTarget(points[0], points[10]);
-
-        System.out.println("Map");
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                System.out.print(String.format("%3d", master.occupationMap[i][j]));
-            }
-            System.out.print("\n");
-        }
-
-        System.out.println("Done");
+        master.testPath();
     }
 }
 
