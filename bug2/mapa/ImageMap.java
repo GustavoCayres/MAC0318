@@ -176,6 +176,8 @@ public class ImageMap extends JPanel {
         double dx, dy;
         dx = -9.0;
         dy = -79;
+        dx = 7.5;
+        dy = -40;
         dx *= zoom;
         dy *= zoom;
         if (image == true) {

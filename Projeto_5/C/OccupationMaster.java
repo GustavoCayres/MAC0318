@@ -42,6 +42,20 @@ public class OccupationMaster {
             };
         }
 
+        public Cell[] getNeighbors_8() {
+            return new Cell[]{
+                new Cell(i, j + 1),
+                new Cell(i + 1, j),
+                new Cell(i - 1, j),
+                new Cell(i, j - 1),
+                new Cell(i + 1, j + 1),
+                new Cell(i + 1, j -1),
+                new Cell(i - 1, j + 1),
+                new Cell(i - 1, j - 1),
+            };
+        }
+
+
         public boolean equals(Cell that) {
             return this.i == that.i && this.j == that.j;
         }
@@ -78,6 +92,30 @@ public class OccupationMaster {
                 }
             }
         }
+    }
+
+    private void MaThickening() {
+        ArrayList<Cell> to_thick = new ArrayList<>();
+        Cell current = new Cell(0, 0);
+ 
+
+        for (i = 0; i < height ; i++ ) {
+            for (j = 0; j < width ; j++) {
+                if (occupationMap[i][j] == -1) {
+                    for(Cell neighbor : current.getNeighbors_8()) {
+                        if (isValid(neighbor) && occupationMap[neighbor.i][neighbor.j] != -1)
+                            to_thick.add(neighbor)
+                    }
+                }                    
+            }
+        }
+
+        while(!to_thick.isEmpty()) {
+            Cell cell = to_thick.poll();
+            occupationMap[cell.i][cell.j] = -1;
+        }
+
+
     }
 
     private boolean isValid(Cell c) {
