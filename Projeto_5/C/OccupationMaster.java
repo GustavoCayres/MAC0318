@@ -94,29 +94,29 @@ public class OccupationMaster {
         }
     }
 
-    private void MaThickening() {
-        ArrayList<Cell> to_thick = new ArrayList<>();
-        Cell current = new Cell(0, 0);
+     private void mapThickening() {
+         LinkedList<Cell> to_thick = new LinkedList<>();
+         Cell current = new Cell(0, 0);
  
 
-        for (i = 0; i < height ; i++ ) {
-            for (j = 0; j < width ; j++) {
-                if (occupationMap[i][j] == -1) {
-                    for(Cell neighbor : current.getNeighbors_8()) {
-                        if (isValid(neighbor) && occupationMap[neighbor.i][neighbor.j] != -1)
-                            to_thick.add(neighbor)
-                    }
-                }                    
-            }
-        }
+      for (int i = 0; i < height ; i++ ) {
+             for (int j = 0; j < width ; j++) {
+                 if (occupationMap[i][j] == -1) {
+                     for(Cell neighbor : current.getNeighbors_8()) {
+                         if (isValid(neighbor) && occupationMap[neighbor.i][neighbor.j] != -1)
+                             to_thick.add(neighbor);
+                     }
+                 }                    
+             }
+         }
 
-        while(!to_thick.isEmpty()) {
-            Cell cell = to_thick.poll();
-            occupationMap[cell.i][cell.j] = -1;
-        }
+       while(!to_thick.isEmpty()) {
+             Cell cell = to_thick.poll();
+             occupationMap[cell.i][cell.j] = -1;
+         }
 
 
-    }
+  }
 
     private boolean isValid(Cell c) {
         return c.i >= 0 && c.i < height && c.j >= 0 && c.j < width;
@@ -178,7 +178,7 @@ public class OccupationMaster {
             int min_dist = Integer.MAX_VALUE;
             Cell min = null;
 
-            for (Cell neighbor : current.getNeighbors()) {
+            for (Cell neighbor : current.getNeighbors_8()) {
                 if (isValid(neighbor) &&
                         occupationMap[neighbor.i][neighbor.j] != -1 &&
                         occupationMap[neighbor.i][neighbor.j] < min_dist) {
@@ -285,6 +285,7 @@ public class OccupationMaster {
 
     private void testPath() {
         buildOccupationMap();
+        mapThickening();
         populateDistanceToTarget(points[0], points[10]);
         List<Cell> path = findPath(new Cell(points[0]), new Cell(points[10]));
 
