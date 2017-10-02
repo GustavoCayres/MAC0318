@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.io.*;
 import java.util.List;
+import java.util.Scanner;
 
 public class OccupationMaster {
     private DataOutputStream dos;
@@ -23,12 +24,12 @@ public class OccupationMaster {
     public class Cell {
         int i, j;
 
-        public Cell(int i, int j) {
+        Cell(int i, int j) {
             this.i = i;
             this.j = j;
         }
 
-        public Cell(Point p) {
+        Cell(Point p) {
             this.i = (int) p.x / grid_size;
             this.j = (int) p.y / grid_size;
         }
@@ -55,9 +56,16 @@ public class OccupationMaster {
             };
         }
 
+        public Line lineTo(Cell that) {
+            return new Line(this.i * grid_size, this.j * grid_size, that.i * grid_size, that.j * grid_size);
+        }
 
         public boolean equals(Cell that) {
             return this.i == that.i && this.j == that.j;
+        }
+
+        public Point toPoint() {
+            return new Point(i * grid_size, j*grid_size);
         }
 
         @Override
@@ -110,7 +118,7 @@ public class OccupationMaster {
             }
         }
 
-        while(!to_thick.isEmpty()) {
+        while (!to_thick.isEmpty()) {
             Cell cell = to_thick.poll();
             occupationMap[cell.i][cell.j] = -1;
         }
@@ -167,6 +175,10 @@ public class OccupationMaster {
         }
     }
 
+    private List<Cell> findPath(Point origin, Point target) {
+        return findPath(new Cell(origin), new Cell(target));
+    }
+
     private List<Cell> findPath(Cell origin, Cell target) {
         ArrayList<Cell> path = new ArrayList<>();
 
@@ -190,6 +202,45 @@ public class OccupationMaster {
         }
 
         return path;
+    }
+
+    public List<Point> linearizePath(List<Cell> path) {
+        LinkedList<Point> linearized = new LinkedList<>();
+        int i = 0;
+
+        Cell source = path.get(0);
+        Cell target = path.get(path.size() - 1);
+
+        linearized.add(source.toPoint());
+
+        for (source = path.get(i); !source.equals(target); ) {
+            int j = path.size() - 1;
+            boolean intersects = false;
+
+            for (Cell c = path.get(j); !c.equals(source); c = path.get(j--)) {
+                intersects = false;
+                Line line = source.lineTo(c);
+
+                for (Line l : lines) {
+                    if (l.intersectsAt(line) != null) {
+                        intersects = true;
+                        break;
+                    }
+                }
+
+                if (!intersects) {
+                    linearized.add(c.toPoint());
+                    source = c;
+                    break;
+                }
+            }
+            if (intersects) {
+                source = path.get(i++);
+                linearized.add(source.toPoint());
+            }
+        }
+
+        return linearized;
     }
 
     private static final String NXT_ID = "NXT07"; // NXT BRICK ID
@@ -284,8 +335,9 @@ public class OccupationMaster {
     private void testPath() {
         buildOccupationMap();
         mapThickening();
-//        populateDistanceToTarget(points[0], points[10]);
-//        List<Cell> path = findPath(new Cell(points[0]), new Cell(points[10]));
+        populateDistanceToTarget(points[0], points[6]);
+        List<Cell> path = findPath(new Cell(points[0]), new Cell(points[6]));
+        List<Point> linearized = linearizePath(path);
 
         System.out.println("Map");
 
@@ -298,41 +350,54 @@ public class OccupationMaster {
 
         System.out.println("Done");
 
-//        for (Cell c : path) {
-//            System.out.println(c);
-//        }
+        for (Cell c : path) {
+            System.out.println(c);
+        }
+
+        for (Point c : linearized) {
+            System.out.println(c);
+        }
     }
 
     public static void main(String[] args) {
         byte cmd;
         float ret = 0, addX = 0f, addY = 0f;
-        boolean boolRet = false;
         int start, end;
 
         OccupationMaster master = new OccupationMaster();
-//        master.connect();
-//        Scanner scan = new Scanner( System.in );
+        master.connect();
+        Scanner scan = new Scanner( System.in );
 
-//        while (true) {
-//            System.out.print("Enter command [0:ADD_START_AND_STOP 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
-//            cmd = scan.nextByte();
-//            if (cmd == 0){
-//                System.out.println("Enter start point: ");
-//                start = scan.nextInt();
-//                System.out.println("Enter end point: ");
-//                end = scan.nextInt();
-//
-//            }
-//            if (cmd == 1 || cmd == 2) {
-//                ret = master.sendCommand(cmd, (float) -1, (float) -1);
-//                System.out.println("cmd: " + " return: " + ret);
-//            } else if (cmd == 3) {
-//                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
-//                System.exit(0);
-//            }
-//        }
+        master.buildOccupationMap();
+        master.mapThickening();
 
-        master.testPath();
+        while (true) {
+            System.out.print("Enter command [0:ADD_START_AND_STOP 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
+            cmd = scan.nextByte();
+            if (cmd == 0){
+                System.out.println("Enter start point: ");
+                start = scan.nextInt();
+                System.out.println("Enter end point: ");
+                end = scan.nextInt();
+
+                master.populateDistanceToTarget(points[start], points[end]);
+                List<Cell> path = master.findPath(points[start], points[end]);
+                List<Point> linearized = master.linearizePath(path);
+
+                for (Point p: linearized) {
+                    ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
+
+                    System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
+                }
+            }
+            if (cmd == 1 || cmd == 2) {
+                ret = master.sendCommand(cmd, (float) -1, (float) -1);
+                System.out.println("cmd: " + " return: " + ret);
+            } else if (cmd == 3) {
+                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
+                System.exit(0);
+            }
+        }
     }
 }
 
