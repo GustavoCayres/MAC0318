@@ -94,28 +94,26 @@ public class OccupationMaster {
         }
     }
 
-     private void mapThickening() {
-         LinkedList<Cell> to_thick = new LinkedList<>();
-         Cell current = new Cell(0, 0);
- 
+    private void mapThickening() {
+        LinkedList<Cell> to_thick = new LinkedList<>();
+        Cell current;
 
-      for (int i = 0; i < height ; i++ ) {
-             for (int j = 0; j < width ; j++) {
-                 if (occupationMap[i][j] == -1) {
-                     for(Cell neighbor : current.getNeighbors_8()) {
-                         if (isValid(neighbor) && occupationMap[neighbor.i][neighbor.j] != -1)
-                             to_thick.add(neighbor);
-                     }
-                 }                    
-             }
-         }
+        for (int i = 0; i < height ; i++ ) {
+            for (int j = 0; j < width ; j++) {
+                current = new Cell(i, j);
+                if (occupationMap[i][j] == -1) {
+                    for (Cell neighbor : current.getNeighbors_8()) {
+                        if (isValid(neighbor) && occupationMap[neighbor.i][neighbor.j] != -1)
+                            to_thick.add(neighbor);
+                    }
+                }
+            }
+        }
 
-       while(!to_thick.isEmpty()) {
-             Cell cell = to_thick.poll();
-             occupationMap[cell.i][cell.j] = -1;
-         }
-
-
+        while(!to_thick.isEmpty()) {
+            Cell cell = to_thick.poll();
+            occupationMap[cell.i][cell.j] = -1;
+        }
   }
 
     private boolean isValid(Cell c) {
@@ -286,8 +284,8 @@ public class OccupationMaster {
     private void testPath() {
         buildOccupationMap();
         mapThickening();
-        populateDistanceToTarget(points[0], points[10]);
-        List<Cell> path = findPath(new Cell(points[0]), new Cell(points[10]));
+//        populateDistanceToTarget(points[0], points[10]);
+//        List<Cell> path = findPath(new Cell(points[0]), new Cell(points[10]));
 
         System.out.println("Map");
 
@@ -300,9 +298,9 @@ public class OccupationMaster {
 
         System.out.println("Done");
 
-        for (Cell c : path) {
-            System.out.println(c);
-        }
+//        for (Cell c : path) {
+//            System.out.println(c);
+//        }
     }
 
     public static void main(String[] args) {
