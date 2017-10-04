@@ -14,7 +14,7 @@ import lejos.geom.*;
 import lejos.robotics.mapping.LineMap;
 //import java.util.stream.Collectors;
 
-public class MasterVisibilty {
+public class MasterVisibility {
     private DataOutputStream dos;
     private DataInputStream dis;
 
@@ -58,9 +58,8 @@ public class MasterVisibilty {
     //private static Graph G;
 
 
-    public static LinkedList<Line> map = new LinkedList<>();
-
-    private void dilattedLines() {
+    private LinkedList<Line> dilattedLines() {
+        LinkedList<Line> map = new LinkedList<>();
         float epsilon = 5f;
         for(Line l : lines) {
             l.lengthen(epsilon);
@@ -72,8 +71,8 @@ public class MasterVisibilty {
                 m = (p1.y - p2.y) / (p1.x - p2.x);
             }
             catch(ArithmeticException e) {
-                map.add(new Line(p1.x + epsilon, p1.y, p2.x + epsilon, p2.y));
-                map.add(new Line(p1.x - epsilon, p1.y, p2.x - epsilon, p2.y));
+                //map.add(new Line(p1.x + epsilon, p1.y, p2.x + epsilon, p2.y));
+                //map.add(new Line(p1.x - epsilon, p1.y, p2.x - epsilon, p2.y));
             }
             try {
                 inverse_m = - 1/m; 
@@ -89,16 +88,18 @@ public class MasterVisibilty {
                 Point p4 = aux2.getP2(); 
                 Line aux3 = new Line(p1.x, p1.y, p3.x, p3.y);
                 Line aux4 = new Line(p2.x, p2.y, p4.x, p4.y);
-                map.add(aux1);
-                map.add(aux2);
+                map.add(l);
+                //map.add(aux1);
+                //map.add(aux2);
                 map.add(aux3);
                 map.add(aux4);
             }
             catch(ArithmeticException e) {
-                map.add(new Line(p1.x + epsilon, p1.y, p2.x + epsilon, p2.y));
+                //map.add(new Line(p1.x + epsilon, p1.y, p2.x + epsilon, p2.y));
             }
 
         }
+        return map;
     }
 
     // private void addUndirectedEdgeBetweenPoints(int source, int dest) {
@@ -153,7 +154,7 @@ public class MasterVisibilty {
 //            NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.USB);
 			/* Uncomment next line for Bluetooth communication */
             NXTComm nxtComm = NXTCommFactory.createNXTComm(NXTCommFactory.BLUETOOTH);
-            NXTInfo[] nxtInfo = nxtComm.search(MasterVisibilty.NXT_ID);
+            NXTInfo[] nxtInfo = nxtComm.search(MasterVisibility.NXT_ID);
 
             if (nxtInfo.length == 0) {
                 System.err.println("NO NXT found");
@@ -200,8 +201,15 @@ public class MasterVisibilty {
         float ret = 0, addX = 0f, addY = 0f;
         boolean boolRet = false;
         int start, end;
+
+        MasterVisibility master = new MasterVisibility();
+        //master.connect();
+        //Scanner scan = new Scanner( System.in );
+
         Rectangle bounds = new Rectangle(0, 0, 1195, 920); 
-        LineMap mymap = new LineMap(map.toArray(), bounds);
+        LinkedList<Line> map = master.dilattedLines();
+        Line[] a = {};
+        LineMap mymap = new LineMap(map.toArray(a), bounds);
 
         try{
             mymap.createSVGFile("mapa.svg");
@@ -212,9 +220,7 @@ public class MasterVisibilty {
             System.out.println(e.getMessage());
         }
 
-        MasterVisibilty master = new MasterVisibilty();
-        master.connect();
-        Scanner scan = new Scanner( System.in );
+        
 
         //master.initGraph();
 
