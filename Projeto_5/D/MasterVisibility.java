@@ -80,7 +80,7 @@ public class MasterVisibility {
                 float c2 = (p2.y + inverse_m * p2.x); // constante
                 Line aux1 = new Line(p1.x, p1.y, p1.x + epsilon/100, inverse_m * c1);
                 aux1.lengthen(epsilon);
-                Line aux2 = new Line(p2.x, p2.y, p2.x + epsilon, inverse_m * c2);
+                Line aux2 = new Line(p2.x, p2.y, p2.x + epsilon/100, inverse_m * c2);
                 aux2.lengthen(epsilon);
                 p1 = aux1.getP1();
                 p2 = aux1.getP2();
@@ -89,8 +89,8 @@ public class MasterVisibility {
                 Line aux3 = new Line(p1.x, p1.y, p3.x, p3.y);
                 Line aux4 = new Line(p2.x, p2.y, p4.x, p4.y);
                 map.add(l);
-                //map.add(aux1);
-                //map.add(aux2);
+                map.add(aux1);
+                map.add(aux2);
                 map.add(aux3);
                 map.add(aux4);
             }
