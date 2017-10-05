@@ -60,12 +60,12 @@ public class MasterVisibility {
 
     private LinkedList<Line> dilattedLines() {
         LinkedList<Line> map = new LinkedList<>();
-        float epsilon = 5f;
+        float epsilon = (float) 20.0;
         for(Line l : lines) {
             l.lengthen(epsilon);
             Point p1 = l.getP1();
             Point p2 = l.getP2();
-            float m = 0;
+            float m = (float) 0;
             float inverse_m;
             try {
                 m = (p1.y - p2.y) / (p1.x - p2.x);
@@ -76,11 +76,11 @@ public class MasterVisibility {
             }
             try {
                 inverse_m = - 1/m; 
-                float c1 = (p1.y + inverse_m * p1.x); //constante
-                float c2 = (p2.y + inverse_m * p2.x); // constante
-                Line aux1 = new Line(p1.x, p1.y, p1.x + epsilon/100, inverse_m * c1);
+                float c1 = (p1.y - inverse_m * p1.x); //constante
+                float c2 = (p2.y - inverse_m * p2.x); // constante
+                Line aux1 = new Line(p1.x, p1.y, p1.x + epsilon/100, inverse_m * (p1.x + epsilon/100) + c1);
                 aux1.lengthen(epsilon);
-                Line aux2 = new Line(p2.x, p2.y, p2.x + epsilon/100, inverse_m * c2);
+                Line aux2 = new Line(p2.x, p2.y, p2.x + epsilon/100, inverse_m * (p2.x + epsilon/100) + c2);
                 aux2.lengthen(epsilon);
                 p1 = aux1.getP1();
                 p2 = aux1.getP2();
