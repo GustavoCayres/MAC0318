@@ -55,12 +55,30 @@ public class MasterVisibility {
         new Line(480,525,335,345)
     };
 
-    //private static Graph G;
+    private static Graph G;
+    private static LinkedList<Point> waypoints;
 
 
-    private LinkedList<Line> dilattedLines() {
+    private float distanceBetweenPoints(Point p1, Point p2) {
+        return (float) Math.sqrt( Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) );
+    }
+
+    private boolean closePoint(Point p1, float epsilon) {
+        for(Point p : waypoints) {
+            if(distanceBetweenPoints(p1, p) <= epsilon * 5)
+                return true;
+        }
+        return false;
+    }
+
+    private void addWaypoint(Point p1, float epsilon){
+        if(!closePoint(p1, epsilon))
+            waypoints.add(p1);
+    }
+
+    private LinkedList<Line> dilatedLines() {
         LinkedList<Line> map = new LinkedList<>();
-        float epsilon = (float) 20.0;
+        float epsilon = (float) 10.0;
         for(Line l : lines) {
             l.lengthen(epsilon);
             Point p1 = l.getP1();
@@ -88,11 +106,20 @@ public class MasterVisibility {
                 Point p4 = aux2.getP2(); 
                 Line aux3 = new Line(p1.x, p1.y, p3.x, p3.y);
                 Line aux4 = new Line(p2.x, p2.y, p4.x, p4.y);
+
+                l.lengthen(-epsilon);
+
                 map.add(l);
+
                 map.add(aux1);
                 map.add(aux2);
                 map.add(aux3);
                 map.add(aux4);
+
+                addWaypoint(p1, epsilon);
+                addWaypoint(p2, epsilon);
+                addWaypoint(p3, epsilon);
+                addWaypoint(p4, epsilon);
             }
             catch(ArithmeticException e) {
                 //map.add(new Line(p1.x + epsilon, p1.y, p2.x + epsilon, p2.y));
@@ -102,26 +129,44 @@ public class MasterVisibility {
         return map;
     }
 
-    // private void addUndirectedEdgeBetweenPoints(int source, int dest) {
-        // G.addUndirectedEdge(source, dest, points[source].distance(points[dest]));
-    // }
-// 
-    // private void initGraph() {
-        // G = new Graph(12);
-// 
-        // addUndirectedEdgeBetweenPoints(1,2);
-        // addUndirectedEdgeBetweenPoints(2,3);
-        // addUndirectedEdgeBetweenPoints(2,6);
-        // addUndirectedEdgeBetweenPoints(3,4);
-        // addUndirectedEdgeBetweenPoints(4,5);
-        // addUndirectedEdgeBetweenPoints(4,10);
-        // addUndirectedEdgeBetweenPoints(5,6);
-        // addUndirectedEdgeBetweenPoints(5,10);
-        // addUndirectedEdgeBetweenPoints(6,7);
-        // addUndirectedEdgeBetweenPoints(7,8);
-        // addUndirectedEdgeBetweenPoints(8,11);
-        // addUndirectedEdgeBetweenPoints(10,11);
-    // }
+    private void initWaypoints(Point source, Point dest) {
+        waypoints = new LinkedList<>();
+        waypoints.add(source);
+        waypoints.add(dest);
+
+    }
+
+    private void addEdgeBetweenPoints(Point[] points, int i, int j) {
+        G.addEdge(i, j, points[i].distance(points[j]));
+    }
+
+    private LinkedList<Line> initGraph(int nwaypoints) {
+        G = new Graph(nwaypoints);
+        LinkedList<Line> map = new LinkedList<>();
+        Point[] wp = {};
+        wp = waypoints.toArray(wp);
+
+        for(int i = 0; i < wp.length; i++) {
+            for(int j = 0; j < wp.length; j++) {
+                if(i != j) {
+                    Line line = new Line(wp[i].x, wp[i].y, wp[j].x, wp[j].y);
+                    boolean intersect = false;
+                    for(Line l : lines) {
+                        if (line.intersectsAt(l) != null) {
+                            intersect = true;
+                            break;
+                        }
+                    }
+                    if(!intersect) {
+                        map.add(line);
+                        addEdgeBetweenPoints(wp, i, j);
+                    }
+                }
+            }
+        }
+        return map;
+
+    }
 
     private float sendCommand(byte command, float paramX, float paramY) {
         try {
@@ -206,19 +251,54 @@ public class MasterVisibility {
         //master.connect();
         //Scanner scan = new Scanner( System.in );
 
-        Rectangle bounds = new Rectangle(0, 0, 1195, 920); 
-        LinkedList<Line> map = master.dilattedLines();
+
+
+        //Tudo aqui pra baixo tem que fazer pra cada ponto
+        master.initWaypoints(points[1], points[10]);
+
+        //Dilata as linhas
+        LinkedList<Line> map_dilated = master.dilatedLines();
+        //Gera o grafo e o mapa de visibildiade
+        LinkedList<Line> map_visibility = master.initGraph(waypoints.size());
+
+        List<Integer> path = G.shortestPathBetween(0, 1);
+
+        System.out.println("path: ");
+        Point[] wp = {};
+        wp = waypoints.toArray(wp);
+
+        for (int v : path) {
+            Point p = wp[v];
+            System.out.println("" + v);
+ 
+            //ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
+
+            System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
+        }
+
+        //Gerando figuras do mapa
         Line[] a = {};
-        LineMap mymap = new LineMap(map.toArray(a), bounds);
+        Rectangle bounds = new Rectangle(0, 0, 1195, 920); 
+        LineMap mymap = new LineMap(map_dilated.toArray(a), bounds);
 
         try{
-            mymap.createSVGFile("mapa.svg");
-            mymap.flip().createSVGFile("mapaFlipY.svg"); //creates a fliped version in the Y-axis of the orginal image
+            mymap.createSVGFile("mapa_dilatado.svg");
+            mymap.flip().createSVGFile("mapa_dilatadoFlipY.svg"); //creates a fliped version in the Y-axis of the orginal image
         }
         catch (Exception e){
             System.out.print("Exception caught: ");
             System.out.println(e.getMessage());
         }
+        mymap = new LineMap(map_visibility.toArray(a), bounds);
+        try{
+            mymap.createSVGFile("mapa_visibilidade.svg");
+            mymap.flip().createSVGFile("mapa_visibilidadeFlipY.svg"); //creates a fliped version in the Y-axis of the orginal image
+        }
+        catch (Exception e){
+            System.out.print("Exception caught: ");
+            System.out.println(e.getMessage());
+        }
+
 
         
 
