@@ -227,56 +227,56 @@ public class MasterVisibility {
         int start, end;
 
         MasterVisibility master = new MasterVisibility();
-        //master.connect();
-        //Scanner scan = new Scanner( System.in );
+        master.connect();
+        Scanner scan = new Scanner( System.in );
 
 
 
         //Tudo aqui pra baixo tem que fazer pra cada ponto
-        master.initWaypoints(points[1], points[10]);
+        // master.initWaypoints(points[1], points[10]);
 
-        //Dilata as linhas
-        LinkedList<Line> map_dilated = master.dilatedLines();
-        //Gera o grafo e o mapa de visibildiade
-        LinkedList<Line> map_visibility = master.initGraph(waypoints.size());
+        // //Dilata as linhas
+        // LinkedList<Line> map_dilated = master.dilatedLines();
+        // //Gera o grafo e o mapa de visibildiade
+        // LinkedList<Line> map_visibility = master.initGraph(waypoints.size());
 
-        List<Integer> path = G.shortestPathBetween(0, 1);
+        // List<Integer> path = G.shortestPathBetween(0, 1);
 
-        System.out.println("path: ");
-        Point[] wp = {};
-        wp = waypoints.toArray(wp);
+        // System.out.println("path: ");
+        // Point[] wp = {};
+        // wp = waypoints.toArray(wp);
 
-        for (int v : path) {
-            Point p = wp[v];
-            System.out.println("" + v);
+        // for (int v : path) {
+        //     Point p = wp[v];
+        //     System.out.println("" + v);
  
-            //ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
+        //     //ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
 
-            System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
-        }
+        //     System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
+        // }
 
-        //Gerando figuras do mapa
-        Line[] a = {};
-        Rectangle bounds = new Rectangle(0, 0, 1195, 920); 
-        LineMap mymap = new LineMap(map_dilated.toArray(a), bounds);
+        // //Gerando figuras do mapa
+        // Line[] a = {};
+        // Rectangle bounds = new Rectangle(0, 0, 1195, 920); 
+        // LineMap mymap = new LineMap(map_dilated.toArray(a), bounds);
 
-        try{
-            mymap.createSVGFile("mapa_dilatado.svg");
-            mymap.flip().createSVGFile("mapa_dilatadoFlipY.svg"); //creates a fliped version in the Y-axis of the orginal image
-        }
-        catch (Exception e){
-            System.out.print("Exception caught: ");
-            System.out.println(e.getMessage());
-        }
-        mymap = new LineMap(map_visibility.toArray(a), bounds);
-        try{
-            mymap.createSVGFile("mapa_visibilidade.svg");
-            mymap.flip().createSVGFile("mapa_visibilidadeFlipY.svg"); //creates a fliped version in the Y-axis of the orginal image
-        }
-        catch (Exception e){
-            System.out.print("Exception caught: ");
-            System.out.println(e.getMessage());
-        }
+        // try{
+        //     mymap.createSVGFile("mapa_dilatado.svg");
+        //     mymap.flip().createSVGFile("mapa_dilatadoFlipY.svg"); //creates a fliped version in the Y-axis of the orginal image
+        // }
+        // catch (Exception e){
+        //     System.out.print("Exception caught: ");
+        //     System.out.println(e.getMessage());
+        // }
+        // mymap = new LineMap(map_visibility.toArray(a), bounds);
+        // try{
+        //     mymap.createSVGFile("mapa_visibilidade.svg");
+        //     mymap.flip().createSVGFile("mapa_visibilidadeFlipY.svg"); //creates a fliped version in the Y-axis of the orginal image
+        // }
+        // catch (Exception e){
+        //     System.out.print("Exception caught: ");
+        //     System.out.println(e.getMessage());
+        //}
 
 
         
