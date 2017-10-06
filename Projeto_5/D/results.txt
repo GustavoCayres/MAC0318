@@ -1,0 +1,29 @@
+Se alguém puder gerar imagens desses grafos no mapa original agradeço
+
+
+Coisas a tratar no relatório, no polígono forma de L ele não gera pontos na parte interna do L pois os pontos dilatados gerados acabam sempre na parte interna do L, logo sempre vai intersectar com as linhas que forma o polígono original.
+
+
+Epsilon 10
+Distância entre pontos para eliminar adição de pontos muito próximos(bordas das figuras dilatadas) = epsilon / 100
+
+
+1 -> 10:
+
+cmd: X: 100,000000, Y: 813,000000
+cmd: X: 404,078583, Y: 812,769592
+cmd: X: 756,056885, Y: 604,364563
+cmd: X: 986,000000, Y: 166,000000
+
+Distancia do alvo 5cm
+Passou um pouco quando tava perto dos pontos 6 e 5, mas com dilatação maior não ocorre isso.
+
+11 -> 1:
+
+cmd: X: 490,000000, Y: 100,000000, ret: 0,000000
+cmd: X: 165,013397, Y: 423,766968, ret: 0,000000
+cmd: X: 46,766754, Y: 684,984558, ret: 0,000000
+cmd: X: 100,000000, Y: 813,000000, ret: 0,000000
+
+Distância do alvo 3cm
+Fez corretamente, e percorreu a linha do polígono pelo lado de fora dele
