@@ -220,27 +220,6 @@ public class MasterVisibility {
         }
     }
 
-    // private void addUndirectedEdgeBetweenPoints(int source, int dest) {
-    //     G.addUndirectedEdge(source, dest, points[source].distance(points[dest]));
-    // }
-
-    // private void initGraph() {
-    //     G = new Graph(12);
-
-    //     addUndirectedEdgeBetweenPoints(1,2);
-    //     addUndirectedEdgeBetweenPoints(2,3);
-    //     addUndirectedEdgeBetweenPoints(2,6);
-    //     addUndirectedEdgeBetweenPoints(3,4);
-    //     addUndirectedEdgeBetweenPoints(4,5);
-    //     addUndirectedEdgeBetweenPoints(4,10);
-    //     addUndirectedEdgeBetweenPoints(5,6);
-    //     addUndirectedEdgeBetweenPoints(5,10);
-    //     addUndirectedEdgeBetweenPoints(6,7);
-    //     addUndirectedEdgeBetweenPoints(7,8);
-    //     addUndirectedEdgeBetweenPoints(8,11);
-    //     addUndirectedEdgeBetweenPoints(10,11);
-    // }
-
     public static void main(String[] args) {
         byte cmd;
         float ret = 0, addX = 0f, addY = 0f;
@@ -304,39 +283,46 @@ public class MasterVisibility {
 
         //master.initGraph();
 
-        // while (true) {
-        //     System.out.print("Enter command [0:ADD_START_AND_STOP 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
-        //     cmd = scan.nextByte();
-        //     if (cmd == 0){
-        //         System.out.println("Enter start point: ");
-        //         start = scan.nextInt();
-        //         System.out.println("Enter end point: ");
-        //         end = scan.nextInt();
+        while (true) {
+            System.out.print("Enter command [0:ADD_START_AND_STOP 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
+            cmd = scan.nextByte();
+            if (cmd == 0){
+                System.out.println("Enter start point: ");
+                start = scan.nextInt();
+                System.out.println("Enter end point: ");
+                end = scan.nextInt();
 
-        //         System.out.println(G);
-        //         List<Integer> path = G.shortestPathBetween(start, end);
-        //         //String s = String.join(" -> ", path.stream().map(Object::toString).collect(Collectors.toList()));
+                master.initWaypoints(points[start], points[end]);        
 
-        //         System.out.println("path: ");
+                //Dilata as linhas
+                LinkedList<Line> map_dilated = master.dilatedLines();
+                //Gera o grafo e o mapa de visibildiade
+                LinkedList<Line> map_visibility = master.initGraph(waypoints.size());       
 
-        //         for (int v : path) {
-        //             Point p = points[v];
-        //             System.out.println("" + v);
- 
-        //             ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
+                List<Integer> path = G.shortestPathBetween(0, 1);       
 
-        //             System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
-        //         }
+                System.out.println("path: ");
+                Point[] wp = {};
+                wp = waypoints.toArray(wp);     
 
-        //     }
-        //     if (cmd == 1 || cmd == 2) {
-        //         ret = master.sendCommand(cmd, (float) -1, (float) -1);
-        //         System.out.println("cmd: " + " return: " + ret);
-        //     } else if (cmd == 3) {
-        //         ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
-        //         System.exit(0);
-        //     }
-        // }
+                for (int v : path) {
+                    Point p = wp[v];
+                    System.out.println("" + v);
+         
+                    ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos     
+
+                    System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
+                }
+
+            }
+            if (cmd == 1 || cmd == 2) {
+                ret = master.sendCommand(cmd, (float) -1, (float) -1);
+                System.out.println("cmd: " + " return: " + ret);
+            } else if (cmd == 3) {
+                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
+                System.exit(0);
+            }
+        }
     }
 }
 
