@@ -1,3 +1,5 @@
+package B;
+
 import lejos.geom.Line;
 import lejos.geom.Point;
 import lejos.pc.comm.NXTComm;
@@ -19,7 +21,7 @@ public class AStarOccupationMaster {
 
     private static int width = 920 / grid_size + 1;
     private static int height = 1195 / grid_size + 1;
-    private int[][] occupationMap = new int[height][width];
+    private double[][] occupationMap = new double[height][width];
 
     public class Cell {
         int i, j;
@@ -175,6 +177,42 @@ public class AStarOccupationMaster {
         }
     }
 
+    private void fillHeuristics(Point target) {
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                occupationMap[i][j] += new Cell(i, j).toPoint().distance(target);
+            }
+        }
+    }
+
+    private void convolute(int convolutions) {
+        double[][] occupationMapCopy = new double[height][width];
+
+        for (int c = 0; c < convolutions; c++) {
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    occupationMapCopy[i][j] = occupationMap[i][j];
+                }
+            }
+
+            for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    Cell[] neighbors = new Cell(i, j).getNeighbors_8();
+                    double value = 0.4 * occupationMapCopy[i][j];
+
+                    for (int k = 0; k < 8; k++) {
+                        Cell neighbor = neighbors[k];
+                        if (k < 4) {
+                            value += 0.1 * occupationMapCopy[neighbor.i][neighbor.j];
+                        } else {
+                            value += 0.05 * occupationMapCopy[neighbor.i][neighbor.j];
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private List<Cell> findPath(Point origin, Point target) {
         return findPath(new Cell(origin), new Cell(target));
     }
@@ -185,11 +223,9 @@ public class AStarOccupationMaster {
 
         Cell current = origin;
 
-
         while (!current.equals(target)) {
-            int min_dist = Integer.MAX_VALUE;
+            double min_dist = Double.MAX_VALUE;
             Cell min = current;
-            int actual = occupationMap[current.i][current.j];
 
             for (Cell neighbor : current.getNeighbors_8()) {
                 if (isValid(neighbor) &&
@@ -282,7 +318,6 @@ public class AStarOccupationMaster {
             new Line(1070,815,1060,516),
       /* Pentagon */
             new Line(335,345,502,155),
-            new Line(502,155,700,225),
             new Line(700,225, 725,490),
             new Line(725,490,480,525),
             new Line(480,525,335,345)
@@ -343,22 +378,20 @@ public class AStarOccupationMaster {
     private void testPath() {
         buildOccupationMap();
 //        mapThickening();
-        populateDistanceToTarget(points[11], points[1]);
+        populateDistanceToTarget(points[1], points[10]);
+        fillHeuristics(points[10]);
+
+        System.out.println("Map");
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                System.out.print(String.format("%3d", occupationMap[i][j]));
+                System.out.print(String.format("%6.2f ", occupationMap[i][j]));
             }
             System.out.print("\n");
         }
 
-
-        List<Cell> path = findPath(new Cell(points[11]), new Cell(points[1]));
+        List<Cell> path = findPath(new Cell(points[1]), new Cell(points[10]));
         List<Point> linearized = linearizePath(path);
-
-        System.out.println("Map");
-
-
 
         System.out.println("Done");
 
@@ -377,40 +410,51 @@ public class AStarOccupationMaster {
         int start, end;
 
         AStarOccupationMaster master = new AStarOccupationMaster();
-//        master.connect();
-//        Scanner scan = new Scanner( System.in );
+        master.connect();
+        Scanner scan = new Scanner( System.in );
 
-//        master.buildOccupationMap();
-//        master.mapThickening();
+        master.buildOccupationMap();
+        master.convolute(3);
 
-//        while (true) {
-//            System.out.print("Enter command [0:ADD_START_AND_STOP 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
-//            cmd = scan.nextByte();
-//            if (cmd == 0){
-//                System.out.println("Enter start point: ");
-//                start = scan.nextInt();
-//                System.out.println("Enter end point: ");
-//                end = scan.nextInt();
-//
-//                master.populateDistanceToTarget(points[start], points[end]);
-//                List<Cell> path = master.findPath(points[start], points[end]);
-//                List<Point> linearized = master.linearizePath(path);
-//
-//                for (Point p: linearized) {
-//                    ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
-//
-//                    System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
-//                }
-//            }
-//            if (cmd == 1 || cmd == 2) {
-//                ret = master.sendCommand(cmd, (float) -1, (float) -1);
-//                System.out.println("cmd: " + " return: " + ret);
-//            } else if (cmd == 3) {
-//                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
-//                System.exit(0);
-//            }
-//        }
-        master.testPath();
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                System.out.print(String.format("%6.2f ", master.occupationMap[i][j]));
+            }
+            System.out.print("\n");
+        }
+
+        master.mapThickening();
+
+        while (true) {
+            System.out.print("Enter command [0:ADD_START_AND_STOP 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
+            cmd = scan.nextByte();
+            if (cmd == 0){
+                System.out.println("Enter start point: ");
+                start = scan.nextInt();
+                System.out.println("Enter end point: ");
+                end = scan.nextInt();
+
+                master.populateDistanceToTarget(points[start], points[end]);
+                master.fillHeuristics(points[end]);
+
+                List<Cell> path = master.findPath(points[start], points[end]);
+                List<Point> linearized = master.linearizePath(path);
+
+                for (Point p: linearized) {
+                    ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
+
+                    System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
+                }
+            }
+            if (cmd == 1 || cmd == 2) {
+                ret = master.sendCommand(cmd, (float) -1, (float) -1);
+                System.out.println("cmd: " + " return: " + ret);
+            } else if (cmd == 3) {
+                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
+                System.exit(0);
+            }
+        }
+//        master.testPath();
     }
 }
 

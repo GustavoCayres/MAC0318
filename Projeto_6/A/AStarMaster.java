@@ -1,3 +1,5 @@
+package A;
+
 import lejos.geom.Point;
 import lejos.pc.comm.NXTComm;
 import lejos.pc.comm.NXTCommException;
