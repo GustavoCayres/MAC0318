@@ -1,4 +1,4 @@
-package B;
+// package B;
 
 import lejos.geom.Line;
 import lejos.geom.Point;
@@ -22,6 +22,7 @@ public class AStarOccupationMaster {
     private static int width = 920 / grid_size + 1;
     private static int height = 1195 / grid_size + 1;
     private double[][] occupationMap = new double[height][width];
+    private double[][] occupationMapProb = new double[height][width];
 
     public class Cell {
         int i, j;
@@ -95,7 +96,7 @@ public class AStarOccupationMaster {
                 for (Line limit : limits) {
                     for (Line line : lines) {
                         if (limit.intersectsAt(line) != null) {
-                            occupationMap[i][j] = -1;
+                            occupationMap[i][j] = 1;
                             break loop;
                         }
                     }
@@ -104,27 +105,6 @@ public class AStarOccupationMaster {
         }
     }
 
-    private void mapThickening() {
-        LinkedList<Cell> to_thick = new LinkedList<>();
-        Cell current;
-
-        for (int i = 0; i < height ; i++ ) {
-            for (int j = 0; j < width ; j++) {
-                current = new Cell(i, j);
-                if (occupationMap[i][j] == -1) {
-                    for (Cell neighbor : current.getNeighbors_8()) {
-                        if (isValid(neighbor) && occupationMap[neighbor.i][neighbor.j] != -1)
-                            to_thick.add(neighbor);
-                    }
-                }
-            }
-        }
-
-        while (!to_thick.isEmpty()) {
-            Cell cell = to_thick.poll();
-            occupationMap[cell.i][cell.j] = -1;
-        }
-  }
 
     private boolean isValid(Cell c) {
         return c.i >= 0 && c.i < height && c.j >= 0 && c.j < width;
@@ -178,9 +158,11 @@ public class AStarOccupationMaster {
     }
 
     private void fillHeuristics(Point target) {
+        double alfa = 0.7;
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                occupationMap[i][j] += new Cell(i, j).toPoint().distance(target);
+                double dist = new Cell(i, j).toPoint().distance(target);
+                occupationMap[i][j] = alfa * occupationMap[i][j] + (1 - alfa) * occupationMapProb[i][j] + dist;
             }
         }
     }
@@ -188,10 +170,16 @@ public class AStarOccupationMaster {
     private void convolute(int convolutions) {
         double[][] occupationMapCopy = new double[height][width];
 
+        for (int i = 0; i < height; i++) {
+                for (int j = 0; j < width; j++) {
+                    occupationMapProb[i][j] = occupationMap[i][j];
+                }
+            }
+
         for (int c = 0; c < convolutions; c++) {
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
-                    occupationMapCopy[i][j] = occupationMap[i][j];
+                    occupationMapCopy[i][j] = occupationMapProb[i][j];
                 }
             }
 
@@ -202,12 +190,15 @@ public class AStarOccupationMaster {
 
                     for (int k = 0; k < 8; k++) {
                         Cell neighbor = neighbors[k];
-                        if (k < 4) {
-                            value += 0.1 * occupationMapCopy[neighbor.i][neighbor.j];
-                        } else {
-                            value += 0.05 * occupationMapCopy[neighbor.i][neighbor.j];
+                        if(isValid(neighbor)) {
+                            if (k < 4) {
+                                value += 0.1 * occupationMapCopy[neighbor.i][neighbor.j];
+                            } else {
+                                value += 0.05 * occupationMapCopy[neighbor.i][neighbor.j];
+                            }
                         }
                     }
+                    occupationMapProb[i][j] = value;
                 }
             }
         }
@@ -226,6 +217,7 @@ public class AStarOccupationMaster {
         while (!current.equals(target)) {
             double min_dist = Double.MAX_VALUE;
             Cell min = current;
+            System.out.println(occupationMap[min.i][min.j]);
 
             for (Cell neighbor : current.getNeighbors_8()) {
                 if (isValid(neighbor) &&
@@ -418,12 +410,12 @@ public class AStarOccupationMaster {
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                System.out.print(String.format("%6.2f ", master.occupationMap[i][j]));
+                System.out.print(String.format("%6.2f ", master.occupationMapProb[i][j]));
             }
             System.out.print("\n");
         }
 
-        master.mapThickening();
+        //master.mapThickening();
 
         while (true) {
             System.out.print("Enter command [0:ADD_START_AND_STOP 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
@@ -436,6 +428,13 @@ public class AStarOccupationMaster {
 
                 master.populateDistanceToTarget(points[start], points[end]);
                 master.fillHeuristics(points[end]);
+
+                for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                System.out.print(String.format("%6.2f ", master.occupationMap[i][j]));
+            }
+            System.out.print("\n");
+        }
 
                 List<Cell> path = master.findPath(points[start], points[end]);
                 List<Point> linearized = master.linearizePath(path);
