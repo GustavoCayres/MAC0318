@@ -185,9 +185,11 @@ public class OccupationMaster {
 
         Cell current = origin;
 
+
         while (!current.equals(target)) {
             int min_dist = Integer.MAX_VALUE;
-            Cell min = null;
+            Cell min = current;
+            int actual = occupationMap[current.i][current.j];
 
             for (Cell neighbor : current.getNeighbors_8()) {
                 if (isValid(neighbor) &&
@@ -198,7 +200,6 @@ public class OccupationMaster {
                     min_dist = occupationMap[neighbor.i][neighbor.j];
                 }
             }
-
             path.add(min);
             current = min;
         }
@@ -342,7 +343,7 @@ public class OccupationMaster {
     private void testPath() {
         buildOccupationMap();
 //        mapThickening();
-        populateDistanceToTarget(points[1], points[10]);
+        populateDistanceToTarget(points[11], points[1]);
 
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
@@ -352,7 +353,7 @@ public class OccupationMaster {
         }
 
 
-        List<Cell> path = findPath(new Cell(points[1]), new Cell(points[10]));
+        List<Cell> path = findPath(new Cell(points[11]), new Cell(points[1]));
         List<Point> linearized = linearizePath(path);
 
         System.out.println("Map");

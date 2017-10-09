@@ -1,3 +1,48 @@
+1->10 (sem linearizar e engrossar):
+
+3 17                                                                                                                    
+4 17                                                                                                                    
+5 17                                                                                                                    
+6 17                                                                                                                    
+7 17                                                                                                                    
+8 16                                                                                                                    
+9 15                                                                                                                    
+10 14                                                                                                                   
+11 13                                                                                                                   
+12 12                                                                                                                   
+13 11                                                                                                                   
+14 10                                                                                                                   
+15 9                                                                                                                    
+16 8                                                                                                                    
+17 7                                                                                                                    
+18 6                                                                                                                    
+19 5                                                                                                                    
+19 4                                                                                                                    
+19 3
+
+
+14cm do ponto
+passa em alguns obstaculos
+
+
+11->1 (sem linearizar e engrossar):
+8 3                                                                                                                     
+7 4                                                                                                                    
+6 5                                                                                                                     
+5 6                                                                                                                     
+4 7                                                                                                                     
+3 7                                                                                                                     
+2 8                                                                                                                     
+1 9                                                                                                                     
+0 10                                                                                                                    
+0 11                                                                                                                    
+0 12                                                                                                                    
+0 13                                                                                                                    
+1 14                                                                                                                    
+2 15                                                                                                                    
+2 16
+
+
 1->10 (sem engrossar):
 
 cmd: X: 150,000000, Y: 850,000000, ret: 0,000000
