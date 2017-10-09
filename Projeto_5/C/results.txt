@@ -42,6 +42,8 @@ passa em alguns obstaculos
 2 15                                                                                                                    
 2 16
 
+9 cm do ponto
+passa em alguns obstaculos
 
 1->10 (sem engrossar):
 
