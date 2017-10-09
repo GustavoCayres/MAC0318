@@ -107,11 +107,10 @@ public class AStarMaster {
     public static void main(String[] args) {
         byte cmd;
         float ret = 0, addX = 0f, addY = 0f;
-        boolean boolRet = false;
         int start, end;
 
         AStarMaster master = new AStarMaster();
-//        master.connect();
+        master.connect();
         Scanner scan = new Scanner( System.in );
 
         master.initGraph();
@@ -138,17 +137,17 @@ public class AStarMaster {
                     Point p = points[v];
                     System.out.println("" + v);
  
-//                    ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
+                    ret = master.sendCommand(cmd, p.x / 10.0f, p.y / 10.0f); // return 0 when Slave successfully received the dos
 
-//                    System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
+                    System.out.println(String.format("cmd: X: %f, Y: %f, ret: %f", p.x, p.y, ret));
                 }
 
             }
             if (cmd == 1 || cmd == 2) {
-//                ret = master.sendCommand(cmd, (float) -1, (float) -1);
+                ret = master.sendCommand(cmd, (float) -1, (float) -1);
                 System.out.println("cmd: " + " return: " + ret);
             } else if (cmd == 3) {
-//                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
+                ret = master.sendCommand(cmd, addX, addY); // return 0 when Slave successfully received the dos
                 System.exit(0);
             }
         }
