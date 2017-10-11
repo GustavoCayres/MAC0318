@@ -80,8 +80,8 @@ public class AStarOccupationMaster {
     private void buildOccupationMap() {
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                occupationMap[i][j] = 0;
-
+                occupationMap[i][j] = 1000;
+                occupationMapProb[i][j] = 0;
                 int x = grid_size * i;
                 int y = grid_size * j;
 
@@ -96,7 +96,7 @@ public class AStarOccupationMaster {
                 for (Line limit : limits) {
                     for (Line line : lines) {
                         if (limit.intersectsAt(line) != null) {
-                            occupationMap[i][j] = 1;
+                            occupationMapProb[i][j] = 1;
                             break loop;
                         }
                     }
@@ -116,7 +116,7 @@ public class AStarOccupationMaster {
         int i_s = (int) source.x / grid_size;
         int j_s = (int) source.y / grid_size;
 
-        occupationMap[i_t][j_t] = -2;
+        occupationMap[i_t][j_t] = 0;
         LinkedList<Cell> queue = new LinkedList<>();
 
         Cell[] neighbors = {
@@ -157,28 +157,13 @@ public class AStarOccupationMaster {
         }
     }
 
-    private void fillHeuristics(Point target) {
-        double alfa = 0.7;
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                double dist = new Cell(i, j).toPoint().distance(target);
-                occupationMap[i][j] = alfa * occupationMap[i][j] + (1 - alfa) * occupationMapProb[i][j] + dist;
-            }
-        }
-    }
-
     private void convolute(int convolutions) {
         double[][] occupationMapCopy = new double[height][width];
 
-        for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
-                    occupationMapProb[i][j] = occupationMap[i][j];
-                }
-            }
-
         for (int c = 0; c < convolutions; c++) {
             for (int i = 0; i < height; i++) {
-                for (int j = 0; j < width; j++) {
+            
+               for (int j = 0; j < width; j++) {
                     occupationMapCopy[i][j] = occupationMapProb[i][j];
                 }
             }
@@ -208,6 +193,13 @@ public class AStarOccupationMaster {
         return findPath(new Cell(origin), new Cell(target));
     }
 
+    private int fScore(Cell cell) {
+        double alfa = 0.7;
+        double heuristic = new Cell(i, j).toPoint().distance(target);
+
+        return alfa * occupationMap[i][j] + (1 - alfa) * occupationMapProb[i][j] + heuristic;
+    }
+
     private List<Cell> findPath(Cell origin, Cell target) {
         System.out.println("Finding path...");
         ArrayList<Cell> path = new ArrayList<>();
@@ -215,17 +207,16 @@ public class AStarOccupationMaster {
         Cell current = origin;
 
         while (!current.equals(target)) {
-            double min_dist = Double.MAX_VALUE;
+            double min_f = Double.MAX_VALUE;
             Cell min = current;
             System.out.println(occupationMap[min.i][min.j]);
 
             for (Cell neighbor : current.getNeighbors_8()) {
                 if (isValid(neighbor) &&
-                        occupationMap[neighbor.i][neighbor.j] != 0 &&
                         occupationMap[neighbor.i][neighbor.j] != -1 &&
-                        occupationMap[neighbor.i][neighbor.j] < min_dist) {
+                        fScore(neighbor) < min_f) {
                     min = neighbor;
-                    min_dist = occupationMap[neighbor.i][neighbor.j];
+                    min_f = fScore(neighbor);
                 }
             }
             path.add(min);

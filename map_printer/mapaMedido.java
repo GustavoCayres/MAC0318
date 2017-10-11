@@ -43,7 +43,7 @@ public class mapaMedido{
     //Rectangle(int x, int y, int width, int height)  -- always integer coordinates
     //Creates a rectangle with top left corner at (x,y) and with specified width and height.
     //Rectangle bounds = new Rectangle(0, -841, 1189, 841);
-    Point[] goal_points = {points[1], points[2], points[6], points[7], points[8]};
+    Point[] goal_points = {points[1], points[2], points[6], points[5], points[10]};
     Point previous_point = goal_points[0];
     for (Point point : goal_points) {
       line_list.add(new Line((float) previous_point.getX(), (float) previous_point.getY(), (float) point.getX(), (float) point.getY()));
