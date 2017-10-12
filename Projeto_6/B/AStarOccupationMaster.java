@@ -179,7 +179,7 @@ public class AStarOccupationMaster {
         while (edge.size != 0) {
             double min_f = Double.MAX_VALUE;
             current = edge.poll();
-            occupation Map[current.x][current.y] = -1;
+            occupationMap[current.x][current.y] = -1;
             if (current.equals(target)) {
                 i = current;
                 path.add(i);
@@ -334,10 +334,8 @@ public class AStarOccupationMaster {
     }
 
     private void testPath() {
-        buildOccupationMap();
-//        mapThickening();
-        populateDistanceToTarget(points[1], points[10]);
-        fillHeuristics(points[10]);
+        //buildOccupationMap();
+        //master.convolute(3);
 
         System.out.println("Map");
 
@@ -368,8 +366,8 @@ public class AStarOccupationMaster {
         int start, end;
 
         AStarOccupationMaster master = new AStarOccupationMaster();
-        master.connect();
-        Scanner scan = new Scanner( System.in );
+        //master.connect();
+        //Scanner scan = new Scanner( System.in );
 
         master.buildOccupationMap();
         master.convolute(3);
@@ -381,8 +379,7 @@ public class AStarOccupationMaster {
             System.out.print("\n");
         }
 
-        //master.mapThickening();
-
+/*
         while (true) {
             System.out.print("Enter command [0:ADD_START_AND_STOP 1:TRAVEL_PATH 2:STATUS 3:STOP]: ");
             cmd = scan.nextByte();
@@ -416,7 +413,8 @@ public class AStarOccupationMaster {
                 System.exit(0);
             }
         }
-//        master.testPath();
+*/
+        master.testPath();
     }
 }
 
