@@ -186,13 +186,16 @@ public class AStarOccupationMaster {
         while (edge.size() != 0) {
             double min_f = Double.MAX_VALUE;
             current = edge.poll();
-            occupationMap[current.i][current.j] = -1;
+            Cell min;
             if (current.equals(target)) {
                 i = current;
                 path.add(i);
-                while (parentMap[i.i][i.j] != i)
+                while (parentMap[i.i][i.j] != i){
                     i = parentMap[i.i][i.j];
                     path.add(i);
+                }
+
+                System.out.println("Found!");
                 return path;
             }
             for (Cell neighbor : current.getNeighbors_8()) {
@@ -201,11 +204,12 @@ public class AStarOccupationMaster {
                         occupationMap[neighbor.i][neighbor.j] > occupationMap[current.i][current.j] + 1) {
                     occupationMap[neighbor.i][neighbor.j] = occupationMap[current.i][current.j] + 1;
                     parentMap[neighbor.i][neighbor.j] = current;
+                    edge.add(neighbor);
                 }
             }
-        }
+            occupationMap[current.i][current.j] = -1;
 
-        System.out.println("Found!");
+        }
         return path;
     }
 
@@ -345,7 +349,6 @@ public class AStarOccupationMaster {
         //master.convolute(3);
 
         List<Cell> path = findPath(new Cell(points[1]), new Cell(points[10]));
-        System.out.println(path.size());
         for (Cell c : path) {
             System.out.println(c);
         }
