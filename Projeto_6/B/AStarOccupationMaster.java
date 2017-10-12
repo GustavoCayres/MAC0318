@@ -12,6 +12,8 @@ import java.util.LinkedList;
 import java.io.*;
 import java.util.List;
 import java.util.Scanner;
+import java.util.Comparator;
+import java.util.PriorityQueue;
 
 public class AStarOccupationMaster {
     private DataOutputStream dos;
@@ -24,6 +26,7 @@ public class AStarOccupationMaster {
     private double[][] occupationMap = new double[height][width];
     private double[][] occupationMapProb = new double[height][width];
     private Cell[][] parentMap = new Cell[height][width];
+    private Cell target;
 
     public class Cell {
         int i, j;
@@ -143,19 +146,19 @@ public class AStarOccupationMaster {
         }
     }
 
-    private List<Cell> findPath(Point origin, Point target) {
-        return findPath(new Cell(origin), new Cell(target));
+    private List<Cell> findPath(Point origin, Point targ) {
+        return findPath(new Cell(origin), new Cell(targ));
     }
 
-    private int fScore(Cell cell) {
+    private double fScore(Cell cell) {
         double alfa = 0.7;
-        double heuristic = new Cell(i, j).toPoint().distance(target);
+        double heuristic = cell.toPoint().distance(target.toPoint());
 
-        return alfa * occupationMap[i][j] + (1 - alfa) * occupationMapProb[i][j] + heuristic;
+        return alfa * occupationMap[cell.i][cell.j] + (1 - alfa) * occupationMapProb[cell.i][cell.j] + heuristic;
     }
 
     private class CellComparator implements Comparator<Cell> {
-        @Override
+        //@Override
         public int compare(Cell x, Cell y) {
             if (fScore(x) < fScore(y)) {
                 return -1;
@@ -167,8 +170,11 @@ public class AStarOccupationMaster {
         }
     }
 
-    private List<Cell> findPath(Cell origin, Cell target) {
+    private List<Cell> findPath(Cell origin, Cell targ) {
         System.out.println("Finding path...");
+
+        target = targ;
+
         Cell current, i;
         ArrayList<Cell> path = new ArrayList<>();
         PriorityQueue<Cell> edge = new PriorityQueue<>(10, new CellComparator());
@@ -176,15 +182,16 @@ public class AStarOccupationMaster {
         occupationMap[origin.i][origin.j] = 0;
         edge.add(origin);
 
-        while (edge.size != 0) {
+
+        while (edge.size() != 0) {
             double min_f = Double.MAX_VALUE;
             current = edge.poll();
-            occupationMap[current.x][current.y] = -1;
+            occupationMap[current.i][current.j] = -1;
             if (current.equals(target)) {
                 i = current;
                 path.add(i);
-                while (parent[i] != i)
-                    i = parent[i];
+                while (parentMap[i.i][i.j] != i)
+                    i = parentMap[i.i][i.j];
                     path.add(i);
                 return path;
             }
@@ -337,24 +344,17 @@ public class AStarOccupationMaster {
         //buildOccupationMap();
         //master.convolute(3);
 
-        System.out.println("Map");
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                System.out.print(String.format("%6.2f ", occupationMap[i][j]));
-            }
-            System.out.print("\n");
-        }
-
         List<Cell> path = findPath(new Cell(points[1]), new Cell(points[10]));
-        List<Point> linearized = linearizePath(path);
-
-        System.out.println("Done");
-
+        System.out.println(path.size());
         for (Cell c : path) {
             System.out.println(c);
         }
 
+        List<Point> linearized = linearizePath(path);
+
+        System.out.println("Done");
+
+       
         for (Point c : linearized) {
             System.out.println(c);
         }
