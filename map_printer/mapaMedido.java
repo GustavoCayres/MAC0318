@@ -34,16 +34,47 @@ public class mapaMedido{
       new Line(1070,815,1060,516),
       /* Pentagon */
       new Line(335,345,502,155),
-      new Line(502,155,700,225),
+      //new Line(502,155,700,225),
       new Line(700,225, 725,490),
       new Line(725,490,480,525),
       new Line(480,525,335,345)
     ));
 
+ 
     //Rectangle(int x, int y, int width, int height)  -- always integer coordinates
     //Creates a rectangle with top left corner at (x,y) and with specified width and height.
     //Rectangle bounds = new Rectangle(0, -841, 1189, 841);
-    Point[] goal_points = {points[1], points[2], points[6], points[5], points[10]};
+    Point[] goal_points = {
+      new Point(100, 800),
+      new Point(50, 750),
+      new Point(0, 700),
+      new Point(0, 650),
+      new Point(0, 600),
+      new Point(0, 550),
+      new Point(0, 500),
+      new Point(0, 450),
+      new Point(0, 400),
+      new Point(0, 350),
+      new Point(50, 300),
+      new Point(100, 250),
+      new Point(150, 250),
+      new Point(200, 200),
+      new Point(250, 150),
+      new Point(300, 100),
+      new Point(350, 50),
+      new Point(400, 50),
+      new Point(450, 0),
+      new Point(500, 50),
+      new Point(550, 100),
+      new Point(600, 150),
+      new Point(550, 200),
+      new Point(550, 250),
+      new Point(550, 300),
+      new Point(500, 350)
+    };  
+
+
+
     Point previous_point = goal_points[0];
     for (Point point : goal_points) {
       line_list.add(new Line((float) previous_point.getX(), (float) previous_point.getY(), (float) point.getX(), (float) point.getY()));
