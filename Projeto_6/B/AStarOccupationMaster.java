@@ -212,7 +212,6 @@ public class AStarOccupationMaster {
                 }
             }
 
-            System.out.print("\n");
             occupationMap[current.i][current.j] = -1;
 
         }

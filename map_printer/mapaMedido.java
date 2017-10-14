@@ -46,31 +46,10 @@ public class mapaMedido{
     //Rectangle bounds = new Rectangle(0, -841, 1189, 841);
     Point[] goal_points = {
       new Point(100, 800),
-      new Point(50, 750),
-      new Point(0, 700),
-      new Point(0, 650),
-      new Point(0, 600),
-      new Point(0, 550),
-      new Point(0, 500),
-      new Point(0, 450),
-      new Point(0, 400),
-      new Point(0, 350),
-      new Point(50, 300),
-      new Point(100, 250),
-      new Point(150, 250),
-      new Point(200, 200),
-      new Point(250, 150),
-      new Point(300, 100),
-      new Point(350, 50),
-      new Point(400, 50),
-      new Point(450, 0),
-      new Point(500, 50),
-      new Point(550, 100),
-      new Point(600, 150),
-      new Point(550, 200),
-      new Point(550, 250),
-      new Point(550, 300),
-      new Point(500, 350)
+      new Point(1150, 850),
+      new Point(1000, 150),
+      new Point(950, 150)
+
     };  
 
 
