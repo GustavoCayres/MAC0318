@@ -1,0 +1,10 @@
+Usage UNIX-like systems:
+
+> nxjpcc -cp core.jar:. Buffer.java Experiment.java Producer.java Reading.java  
+> nxjpc -cp core.jar: Experiment
+
+
+Usage Windows:
+
+> nxjpcc -cp core.jar; .\Buffer.java Experiment.java Producer.java Reading.java  
+> nxjpc -cp core.jar; Experiment
