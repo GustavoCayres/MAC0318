@@ -1,0 +1,2 @@
+BlueCove version 2.1.0 on bluez
+Enter command [0:TRAVEL 1:ROTATE 2:FULL_SCAN 3:SINGLE_SCAN 4:EXIT]: BlueCove stack shutdown completed
