@@ -1,0 +1,10 @@
+Gustavo Cayres
+Gustavo Covas
+Pedro Marcondes
+
+
+Rode com:
+
+> python3 map_generator.py robot_data.txt
+
+Onde "robot_data.txt" é a saída da viagem do robô, obtida na parte 1.
