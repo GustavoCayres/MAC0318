@@ -115,7 +115,7 @@ class Producer extends Thread {
           writer.write("" + val + " ");
       }
       writer.write("\n");
-      
+      writer.flush();
       Motor.C.setSpeed(200);
       Motor.C.rotate(460);
       reinitialize();

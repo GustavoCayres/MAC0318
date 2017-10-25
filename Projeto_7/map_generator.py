@@ -41,6 +41,7 @@ def main():
 			values = line.split()
 
 			x, y, theta = float(values[0]), float(values[1]), float(values[2])
+			print(line)
 			readings = values[3:]
 			for i, reading in enumerate(readings):
 				if (float(reading) < 255):

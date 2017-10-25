@@ -10,4 +10,4 @@ Execute com:
 > nxjpcc -cp core.jar:. Buffer.java Experiment.java Producer.java Reading.java  
 > nxjpc -cp core.jar: Experiment
 
-Lembre-se de terminar o programa com o comando [close] (4). O conteúdo dos escaneamentos estarão no arquivo "./robot_data.txt"
+O conteúdo dos escaneamentos estarão no arquivo "./robot_data.txt"
