@@ -16,7 +16,6 @@ def points2lines(points):
 def points2lines_rec(i_a, i_b, points):
     threshold = 20
     lines = []
-    print(i_a, i_b)
     for i_p in range(i_a, i_b + 1):
         if distance2line(i_a, i_b, i_p, points) > threshold:
             lines += points2lines_rec(i_a, i_p, points)
@@ -51,8 +50,8 @@ def main():
                     cartesian_points.append(polar2cartesian(x, y, theta, float(reading), -90 + (2 * i)))
             lines = points2lines(cartesian_points)
             for l in lines:
-                print("new Line(" + str(int(l[0][0]) + 100) + "," + str(int(l[0][1]) + 100) + "," + str(
-                    int(l[1][0]) + 100) + "," + str(int(l[1][1]) + 100) + "),")
+                print("new Line(" + str(int(l[0][0]) + 250) + "," + str(int(l[0][1]) + 250) + "," + str(
+                    int(l[1][0]) + 250) + "," + str(int(l[1][1]) + 250) + "),")
 
 
 if __name__ == "__main__":
