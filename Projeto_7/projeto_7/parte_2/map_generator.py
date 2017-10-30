@@ -32,10 +32,14 @@ def points2lines(points, readings):
 def points2lines_rec(i_a, i_b, points):
     threshold = 20
     lines = []
+<<<<<<< HEAD
 
     if i_a == i_b:
         return lines
 
+=======
+    print(i_a, i_b)
+>>>>>>> parent of 3aab248... mapas
     for i_p in range(i_a, i_b + 1):
         if distance2line(i_a, i_b, i_p, points) > threshold:
             lines += points2lines_rec(i_a, i_p, points)
@@ -72,8 +76,13 @@ def main():
                 cartesian_points.append(polar2cartesian(x, y, theta, float(reading), -90 + (2 * i)))
             lines = points2lines(cartesian_points, readings)
             for l in lines:
+<<<<<<< HEAD
                 print("new Line(" + str(int(l[0][0]) + 350) + "," + str(int(l[0][1]) + 350) + "," + str(
                     int(l[1][0]) + 350) + "," + str(int(l[1][1]) + 350) + "),")
+=======
+                print("new Line(" + str(int(l[0][0]) + 100) + "," + str(int(l[0][1]) + 100) + "," + str(
+                    int(l[1][0]) + 100) + "," + str(int(l[1][1]) + 100) + "),")
+>>>>>>> parent of 3aab248... mapas
 
 
 if __name__ == "__main__":
