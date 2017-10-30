@@ -9,14 +9,32 @@ def polar2cartesian(x, y, t, r, delta_t):
     return point_x, point_y
 
 
-def points2lines(points):
-    return points2lines_rec(0, len(points) - 1, points)
+def points2lines(points, readings):
+    lines = []
+    i_start = -1
+    for j, reading in enumerate(readings):
+        if i_start != -1:
+            if reading == '255':
+                lines += points2lines_rec(i_start, j - 1, points)
+                i_start = -1
+
+            elif j == len(readings) - 1:
+                lines += points2lines_rec(i_start, j, points)
+
+        else:
+            if reading != '255':
+                i_start = j
+
+    return lines
 
 
 def points2lines_rec(i_a, i_b, points):
     threshold = 20
     lines = []
-    print(i_a, i_b)
+
+    if i_a == i_b:
+        return lines
+
     for i_p in range(i_a, i_b + 1):
         if distance2line(i_a, i_b, i_p, points) > threshold:
             lines += points2lines_rec(i_a, i_p, points)
@@ -47,9 +65,8 @@ def main():
             x, y, theta = float(values[0]), float(values[1]), float(values[2])
             readings = values[3:]
             for i, reading in enumerate(readings):
-                if float(reading) < 255:
-                    cartesian_points.append(polar2cartesian(x, y, theta, float(reading), -90 + (2 * i)))
-            lines = points2lines(cartesian_points)
+                cartesian_points.append(polar2cartesian(x, y, theta, float(reading), -90 + (2 * i)))
+            lines = points2lines(cartesian_points, readings)
             for l in lines:
                 print("new Line(" + str(int(l[0][0]) + 100) + "," + str(int(l[0][1]) + 100) + "," + str(
                     int(l[1][0]) + 100) + "," + str(int(l[1][1]) + 100) + "),")
