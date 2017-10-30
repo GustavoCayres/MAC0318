@@ -14,7 +14,7 @@ def points2lines(points):
 
 
 def points2lines_rec(i_a, i_b, points):
-    threshold = 20
+    threshold = 100
     lines = []
     for i_p in range(i_a, i_b + 1):
         if distance2line(i_a, i_b, i_p, points) > threshold:
