@@ -65,6 +65,9 @@ def main():
             x, y, theta = float(values[0]), float(values[1]), float(values[2])
             readings = values[3:]
             for i, reading in enumerate(readings):
+                if reading == '255' and 0 < i < len(readings) - 1 and readings[i - 1] != '255' and readings[i + 1] != '255':
+                    readings[i] = readings[i-1]
+
                 cartesian_points.append(polar2cartesian(x, y, theta, float(reading), -90 + (2 * i)))
             lines = points2lines(cartesian_points, readings)
             for l in lines:
