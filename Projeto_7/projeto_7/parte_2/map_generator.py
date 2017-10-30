@@ -68,8 +68,8 @@ def main():
                 cartesian_points.append(polar2cartesian(x, y, theta, float(reading), -90 + (2 * i)))
             lines = points2lines(cartesian_points, readings)
             for l in lines:
-                print("new Line(" + str(int(l[0][0]) + 100) + "," + str(int(l[0][1]) + 100) + "," + str(
-                    int(l[1][0]) + 100) + "," + str(int(l[1][1]) + 100) + "),")
+                print("new Line(" + str(int(l[0][0]) + 250) + "," + str(int(l[0][1]) + 250) + "," + str(
+                    int(l[1][0]) + 250) + "," + str(int(l[1][1]) + 250) + "),")
 
 
 if __name__ == "__main__":
