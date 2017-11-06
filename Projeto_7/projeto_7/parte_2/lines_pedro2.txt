@@ -1,10 +1,3 @@
-import lejos.geom.*;
-import lejos.robotics.mapping.LineMap;
-
-public class mapaMedido{
-
-  public static void main(String[] args){
-    Line[] lines = {
 new Line(391,396,250,298),
 new Line(391,396,330,295),
 new Line(391,396,310,317),
@@ -252,22 +245,3 @@ new Line(582,192,502,29),
 new Line(502,29,718,110),
 new Line(718,110,683,210),
 new Line(683,210,279,55),
-
-      
-    };
-    //Rectangle(int x, int y, int width, int height)  -- always integer coordinates
-    //Creates a rectangle with top left corner at (x,y) and with specified width and height.
-    //Rectangle bounds = new Rectangle(0, -841, 1189, 841);  
-    Rectangle bounds = new Rectangle(0, 0, 1000, 1000); 
-    LineMap mymap = new LineMap(lines, bounds);
-
-    try{
-        mymap.createSVGFile("mapa.svg");
-        mymap.flip().createSVGFile("mapaFlipY.svg"); //creates a fliped version in the Y-axis of the orginal image
-    }catch (Exception e){
-        System.out.print("Exception caught: ");
-        System.out.println(e.getMessage());
-    }
-  }
-}
-
