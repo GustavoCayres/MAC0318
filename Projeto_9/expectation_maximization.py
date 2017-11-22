@@ -55,8 +55,8 @@ with open(sys.argv[1]) as measurements_file:
         measurement_list.append((float(split_line[4]), float(split_line[5])))
 
 print(expectation_maximization(w_object=.8,
-                               w_others=.15,
-                               w_lim=.05,
+                               w_others=.10,
+                               w_lim=.10,
                                var_object=3,
                                threshold=.0000001,
                                measurements=measurement_list))
