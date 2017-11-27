@@ -24,20 +24,20 @@ def plot_model(expected):
     plt.show()
 
 
-def plot_histogram(expected):
+def plot_histogram():
     measurement_list = []
     with open(sys.argv[1]) as measurements_file:
         for line in measurements_file:
             split_line = line.split(',')
-            if expected - 20 < float(split_line[5]) < expected + 20:
-                measurement_list.append(float(split_line[4]))
+            measurement_list.append(float(split_line[4]) - float(split_line[5]))
 
-    plt.xlim(0, 260)
+    plt.xlim(-100, 260)
+    plt.grid(.5)
     plt.hist(measurement_list)
     plt.show()
 
 
 if len(sys.argv) > 1:
-    plot_histogram(50)
+    plot_histogram()
 else:
     plot_model(30)
