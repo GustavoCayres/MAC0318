@@ -40,4 +40,4 @@ def plot_histogram():
 if len(sys.argv) > 1:
     plot_histogram()
 else:
-    plot_model(30)
+    plot_model(60)
