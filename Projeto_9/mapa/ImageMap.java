@@ -218,7 +218,7 @@ public class ImageMap extends JPanel {
 
     public void addPoint(Point3D p, Double expected, Double measured) {
     	lista_pontos.add(p);
-    	lista_cores.add(Color.getHSBColor((float) (7 * measurementProbability(expected, measured, 0.33266622284045777, 0.6126025162026004, 0.05473126095694189, 12.566004300171572)), 1, (float) 0.6));
+    	lista_cores.add(Color.getHSBColor((float) (30 * measurementProbability(expected, measured, 0.33266622284045777, 0.6126025162026004, 0.05473126095694189, 12.566004300171572)), 1, (float) 0.6));
     	repaint();
 	}
     
