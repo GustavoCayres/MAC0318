@@ -1,18 +1,11 @@
-Interface Gr�fica - Atividade da semana de break BUG2
+Interface Gráfica
 
-Procedimento para uso do programa:
+- Procedimentos para uso do programa:
 
-1- unzip mapa.zip
-2- javac *.java (compilar todos os arquivos .java da pasta)
+1- cd mapa
+2- javac *.java
 3- java Map
-4- Antes de iniciar o plot de poses, executar os seguintes comandos na interface:
-	4.1-  habilitar modo '3'
-	4.2- 'i' para visualizar o esbo�o do mapa
-	4.3- 'l' para ligar os pontos
-5- Inserir as poses no terminal, separadas por enter, seguindo a ordem: 
-	x y theta
-6- Ao finalizar, pressione 's' na tela do mapa para salvar a imagem
-7- Encerre o programa
-8- Renomear as imagens salvas com informa��o sobre o ponto de partida, exemplo:
-	inicioEmS.png
-	inicioEmG.png
+5- Inserir as poses no terminal a partir de um arquivo de leituras (cada linha pode ser copiada e colocada isoladamente, ou todo o arquivo pode ser enviado para a entrada padrão, sem header)
+
+- Observação:
+Causa o programa retorne um erro após a inserção de dados, o plot da imagem ainda deverá acontecer. Pode ser necessário aplicar zoom na imagem para a visualização dos pontos.
