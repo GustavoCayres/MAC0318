@@ -10,3 +10,11 @@ o - zoom out
 'space bar' - faz uma leitura e atualiza a predição
 'up arrow' - movimenta o robô para frente de um tanto fixo, no caso 10 cm
 'down arrow' - movimenta o robô para trás de um tanto fixo, no caso 10 cm
+
+## Running without the Robot
+
+```
+cd src/
+javac MainProgramWithoutRobot.java
+java MainProgramWithoutRobot
+```
