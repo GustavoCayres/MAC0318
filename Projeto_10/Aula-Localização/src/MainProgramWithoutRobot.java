@@ -17,6 +17,7 @@ public class MainProgramWithoutRobot extends JPanel implements KeyListener, Wind
 	int numbersegments;
 
 	private DiscreteSpace bel;
+	private DiscreteSpace bpc;
 	
 	/*
 	Edite as variáveis, modificando com os valores específicos do mapa
@@ -48,6 +49,7 @@ public class MainProgramWithoutRobot extends JPanel implements KeyListener, Wind
 
 		frame.add(hist);
 
+		initializeBoxProbabilityCoefficients();
 		initializeBelief (); 
 	}
 
@@ -63,10 +65,43 @@ public class MainProgramWithoutRobot extends JPanel implements KeyListener, Wind
 		printHistogram ();
 	}
 
-	private void correction (double distance) { 
-		/*
-			Insira o código de atualização da crença do robô dada uma leitura 'distance' do sonar
-		*/
+	private boolean inFrontOfBox(int cell) {
+		double cell_center = cell * CELL_SIZE + 0.5 * CELL_SIZE;
+
+		for (Double[] box : map) {
+			if (cell_center >= box[0] && cell_center < box[1]) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void initializeBoxProbabilityCoefficients() {
+		bpc = new DiscreteSpace();
+
+		for (int i = 0; i < DISCRET_SIZE; i++) {
+			if (inFrontOfBox(i)) {
+				bpc.add(1.0);
+			} else {
+				bpc.add(0.0);
+			}
+		}
+	}
+
+	private void correction (double distance) {
+		for (int i = 0; i < DISCRET_SIZE; i++) {
+			if (distance < BOX_DEPTH / 2.0) {
+				// We are in front of a box!
+				bel.set(i, bel.get(i) * bpc.get(i));
+			} else {
+				// Not a box...
+				bel.set(i, bel.get(i) * (1.0 - bpc.get(i)));
+			}
+		}
+
+		bel.normalize();
+		
 		printHistogram ();
 	}
 	
@@ -124,6 +159,8 @@ public class MainProgramWithoutRobot extends JPanel implements KeyListener, Wind
 		switch (e.getKeyCode()) {
 		case KeyEvent.VK_SPACE: // barra de espaco para leitura do sonar 
 			// robot.read(this);
+			double dist = askDouble("[Simulação] Valor da distância lida (cm)");
+			correction(dist);
 			break;
 		case KeyEvent.VK_UP: // seta cima, mover para frente em 10 cm 
 			// robot.move(10);
