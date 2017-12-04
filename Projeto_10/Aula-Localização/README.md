@@ -18,3 +18,19 @@ cd src/
 javac MainProgramWithoutRobot.java
 java MainProgramWithoutRobot
 ```
+
+## Cropping images
+
+Crop all images within a directory, using `convert` (requires zsh):
+
+```
+./crop_images.sh <directory> <crop_arg>
+```
+
+Where crop_arg for each directory is
+
+| directory               | crop_arg      |
+| ----------------------- |:-------------:| 
+| test_uniform            | 800x400+74+62 |
+| test\_correct\_gaussian | 800x400+75+62 |
+| test\_wrong\_gaussian   | 800x400+75+62 |
