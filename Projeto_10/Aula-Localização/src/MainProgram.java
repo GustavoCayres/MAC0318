@@ -21,10 +21,10 @@ public class MainProgram extends JPanel implements KeyListener, WindowListener {
 	/*
 	Edite as variáveis, modificando com os valores específicos do mapa
 	*/
-	static private int BOX_DEPTH = 37; // profundidade da caixa
-	static private int WALL_DISTANCE = 80; // distância do sonar à parede
-	static private int LENGHTMAP = 240; // comprimento máximo do mapa
-	static private int DISCRET_SIZE = 120; // número de células da discretização
+	static private int BOX_DEPTH = 24; // profundidade da caixa
+	static private int WALL_DISTANCE = 49; // distância do sonar à parede
+	static private int LENGHTMAP = 585; // comprimento máximo do mapa
+	static private int DISCRET_SIZE = 195; // número de células da discretização
 	static private double CELL_SIZE = LENGHTMAP/DISCRET_SIZE;
 	
 	public MainProgram(double mapsize, int numbersegments, Robot robot, Map map) {
@@ -48,32 +48,59 @@ public class MainProgram extends JPanel implements KeyListener, WindowListener {
 
 		frame.add(hist);
 
-		initializeBelief (); 
+		initializeUniformBelief (); 
 	}
 
-	private void initializeBelief () { 
+	private void initializeGaussianBelief (double mu, double sigma) {
 		bel = new DiscreteSpace();
-
 		for (int i = 0; i < DISCRET_SIZE; i++) {
+
+			bel.add(pdf(i * CELL_SIZE, mu, sigma));
+		}
+
+		bel.normalize();
+
+		printHistogram ();
+	}
+
+	private void initializeUniformBelief () {
+		bel = new DiscreteSpace();
+		for (int i = 0; i < DISCRET_SIZE; i++) {
+
 			bel.add(1.0);
 		}
 
 		bel.normalize();
 
-		/*
-			Insira o código de inicialização da crença do robô quanto a sua localização no eixo-x
-
-			Exemplo:
-				Uma distribuição uniforme considerando todas as células possíveis, indica que o robô não tem uma predição inicial de sua
-				localização. 
-		*/
 		printHistogram ();
 	}
 
-	private void correction (double distance) { 
-		/*
-			Insira o código de atualização da crença do robô dada uma leitura 'distance' do sonar
-		*/
+	private boolean inFrontOfBox(int cell) {
+		double cell_center = cell * CELL_SIZE + 0.5 * CELL_SIZE;
+
+		for (Double[] box : map) {
+			if (cell_center >= box[0] && cell_center < box[1]) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
+	private void correction (double distance) {
+		for (int i = 0; i < DISCRET_SIZE; i++) {
+			double factor;
+			double variance = Math.sqrt(3);
+			if (inFrontOfBox(i)) {
+				factor = pdf(distance, WALL_DISTANCE - BOX_DEPTH, variance);
+			} else {
+				factor = pdf(distance, WALL_DISTANCE, variance);	
+			}	
+			bel.set(i, bel.get(i) * factor);	
+		}
+
+		bel.normalize();
+		
 		printHistogram ();
 	}
 	
@@ -124,7 +151,13 @@ public class MainProgram extends JPanel implements KeyListener, WindowListener {
 			prediction(dist);
 			break;
 		case 'r': // reset
-			initializeBelief();
+			initializeUniformBelief();
+			break;
+		case 's': // reset
+			initializeGaussianBelief(116, 40);
+			break;
+		case 't': // reset
+			initializeGaussianBelief(361, 40);
 			break;
 		}
 		
@@ -133,12 +166,12 @@ public class MainProgram extends JPanel implements KeyListener, WindowListener {
 			robot.read(this);
 			break;
 		case KeyEvent.VK_UP: // seta cima, mover para frente em 10 cm 
-			robot.move(10);
-			prediction(10);
+			robot.move(12);
+			prediction(12);
 			break;
 		case KeyEvent.VK_DOWN: // seta baixo, mover para trás em 10 cm
-			robot.move(-10);
-			prediction(-10);
+			robot.move(-12);
+			prediction(-12);
 			break;
 		}
 	}
@@ -209,9 +242,12 @@ public class MainProgram extends JPanel implements KeyListener, WindowListener {
 	public static void main(String[] args) {
 		Map map  = new Map();
 
-		map.add(45, 76);
-		map.add(121, 152);
-		map.add(225, 256);
+		map.add(20, 50);
+		map.add(101, 131);
+		map.add(212, 242);
+		map.add(346, 376);
+		map.add(422, 452);
+		map.add(526, 556);
 		
 		Robot robot =  new Robot("NXT07"); // altere para o nome do brick
 		if (robot.connect() == false) return;

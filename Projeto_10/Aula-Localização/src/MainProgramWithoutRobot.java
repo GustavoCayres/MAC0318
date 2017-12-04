@@ -22,12 +22,13 @@ public class MainProgramWithoutRobot extends JPanel implements KeyListener, Wind
 	/*
 	Edite as variáveis, modificando com os valores específicos do mapa
 	*/
-	static private int BOX_DEPTH = 37; // profundidade da caixa
-	static private int WALL_DISTANCE = 80; // distância do sonar à parede
-	static private int LENGHTMAP = 240; // comprimento máximo do mapa
+	static private int BOX_DEPTH = 24; // profundidade da caixa
+	static private int WALL_DISTANCE = 49; // distância do sonar à parede
+	static private int LENGHTMAP = 256; // comprimento máximo do mapa
 	static private int DISCRET_SIZE = 120; // número de células da discretização
 	static private double CELL_SIZE = LENGHTMAP/DISCRET_SIZE;
-	
+
+
 	public MainProgramWithoutRobot(double mapsize, int numbersegments, Map map) {
 		// this.robot = robot;
 		max = mapsize;
@@ -49,19 +50,30 @@ public class MainProgramWithoutRobot extends JPanel implements KeyListener, Wind
 
 		frame.add(hist);
 
-		initializeBoxProbabilityCoefficients();
-		initializeBelief (); 
+		initializeGaussianBelief (50, 40);
 	}
 
-	private void initializeBelief () { 
+	private void initializeGaussianBelief (double mu, double sigma) {
 		bel = new DiscreteSpace();
-
 		for (int i = 0; i < DISCRET_SIZE; i++) {
+
+			bel.add(pdf(i * CELL_SIZE, mu, sigma));
+		}
+
+		bel.normalize();
+
+		printHistogram ();
+	}
+
+	private void initializeUniformBelief () {
+		bel = new DiscreteSpace();
+		for (int i = 0; i < DISCRET_SIZE; i++) {
+
 			bel.add(1.0);
 		}
 
 		bel.normalize();
-		
+
 		printHistogram ();
 	}
 
@@ -77,27 +89,16 @@ public class MainProgramWithoutRobot extends JPanel implements KeyListener, Wind
 		return false;
 	}
 
-	private void initializeBoxProbabilityCoefficients() {
-		bpc = new DiscreteSpace();
-
-		for (int i = 0; i < DISCRET_SIZE; i++) {
-			if (inFrontOfBox(i)) {
-				bpc.add(1.0);
-			} else {
-				bpc.add(0.0);
-			}
-		}
-	}
-
 	private void correction (double distance) {
 		for (int i = 0; i < DISCRET_SIZE; i++) {
-			if (distance < BOX_DEPTH / 2.0) {
-				// We are in front of a box!
-				bel.set(i, bel.get(i) * bpc.get(i));
+			double factor;
+			double variance = Math.sqrt(3);
+			if (inFrontOfBox(i)) {
+				factor = pdf(distance, WALL_DISTANCE - BOX_DEPTH, variance);
 			} else {
-				// Not a box...
-				bel.set(i, bel.get(i) * (1.0 - bpc.get(i)));
-			}
+				factor = pdf(distance, WALL_DISTANCE, variance);	
+			}	
+			bel.set(i, bel.get(i) * factor);	
 		}
 
 		bel.normalize();
@@ -152,7 +153,7 @@ public class MainProgramWithoutRobot extends JPanel implements KeyListener, Wind
 			prediction(dist);
 			break;
 		case 'r': // reset
-			initializeBelief();
+			// initializeBelief();
 			break;
 		}
 		
